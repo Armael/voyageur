@@ -9,6 +9,9 @@ typedef struct Vector {
 /* Renvoie un nouveau tableau */
 Vector* vector_new();
 
+/* Renvoie un nouveau tableau préalloué à la taille indiquée */
+Vector* vector_newWithSize(int size);
+
 /* Libère la mémoire occupée par le tableau */
 void vector_free(Vector* v);
 
