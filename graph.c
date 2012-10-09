@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "graph.h"
 #include "vector.h"
@@ -77,3 +78,26 @@ Edge* graph_free(Graph* g) {
   free(g);
 }
 
+/* Écrit dans le fichier filename une représentation du graphe que
+   l'on peut ensuite compiler avec neato (de graphviz) pour obtenir
+   une représetation graphique du graphe */
+void graph_toNeato(Graph* g, char* filename) {
+  FILE* f;
+
+  if((f = fopen(filename, "w")) == NULL)
+    return;
+
+  fprintf(f, "graph G {\n");
+
+  int i;
+  for(i=0; i < g->nodesNb; i++) {
+    Edge* e = GET_EDGE(g->nodes, i);
+    while(e != NULL) {
+      fprintf(f, "  %d -- %d [label=\"%d\"];\n", i, e->dest, e->weight);
+      e = e->next;
+    }
+  }
+  
+  fprintf(f, "}\n");
+  fclose(f);
+}

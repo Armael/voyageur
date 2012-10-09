@@ -35,4 +35,9 @@ void graph_addEdge(int n1, int n2, int weight);
 /* Libère la mémoire occupée par le graphe (nœuds et arêtes) */
 Edge* graph_free(Graph* g);
 
+/* Écrit dans le fichier filename une représentation du graphe que
+   l'on peut ensuite compiler avec neato (de graphviz) pour obtenir
+   une représetation graphique du graphe */
+void graph_toNeato(Graph* g, char* filename);
+
 #endif
