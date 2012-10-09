@@ -4,9 +4,6 @@
 #include "graph.h"
 #include "vector.h"
 
-#define SET_EDGE(v,i,e) (vector_set(v,i,(void*)e))
-#define GET_EDGE(v,i) ((Edge*)vector_get(v,i))
-
 /* Renvoie un nouveau graphe vide (sans nœuds ni arêtes) */
 Graph* graph_new() {
   Graph* g = malloc(sizeof(Graph));

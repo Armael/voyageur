@@ -3,6 +3,9 @@
 
 #include "vector.h"
 
+#define SET_EDGE(v,i,e) (vector_set(v,i,(void*)e))
+#define GET_EDGE(v,i) ((Edge*)vector_get(v,i))
+
 typedef struct edge {
   int dest;
   int weight;
