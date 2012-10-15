@@ -13,7 +13,7 @@ Forest* initForestFromGraph(Graph* g) {
 
   int i;
   for(i=0; i < f->treesNb; i++) {
-    SET_FTREE(f->trees, i, free_create((void*)i));
+    SET_FTREE(f->trees, i, ftree_create((void*)i));
   }
 
   return f;
