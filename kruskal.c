@@ -7,7 +7,7 @@
 
 Forest* initForestFromGraph(Graph* g) {
   Forest* f = malloc(sizeof(Forest));
-  
+
   f->trees = vector_newWithSize(g->nodesNb);
   f->treesNb = g->nodesNb;
 
@@ -85,7 +85,29 @@ Kedge* mergeSort(Kedge* list) {
     split(list, &part1, &part2);
     part1 = mergeSort(part1);
     part2 = mergeSort(part2);
-    
+
     return merge(part1, part2);
   }
 }
+
+
+Ftree* kruskal(Graph* g) {
+  Forest* f = initForestFromGraph(g);
+  Kedge* ke = KedgeListFromGraph(g, f);
+  ke = mergeSort(ke);
+  int i;
+  while(ke != NULL) {
+    if(GET_FTREE(f->trees, ke->n1) != GET_FTREE(f->trees, ke->n2)) {
+      ftree_join(ke->addr1, ke->addr2);
+      Ftree* fn2 = GET_FTREE(f->trees, ke->n2);
+      for(i=0; i < f->treesNb; i++) {
+        if(GET_FTREE(f->trees, i) == fn2) {
+          SET_FTREE(f->trees, i, GET_FTREE(f->trees, ke->n1));
+        }
+      }
+    }
+    ke = ke->next;
+  }
+  return GET_FTREE(f->trees, 0);
+}
+

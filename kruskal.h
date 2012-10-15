@@ -1,3 +1,7 @@
+#include "vector.h"
+#include "graph.h"
+#include "ftree.h"
+
 #ifndef KRUSKAL_H_INCLUDED
 #define KRUSKAL_H_INCLUDED
 
@@ -23,5 +27,7 @@ Forest* initForestFromGraph(Graph* g);
 Kedge* KedgeListFromGraph(Graph* g, Forest* f);
 
 Kedge* mergeSort(Kedge* list);
+
+Ftree* kruskal(Graph* g);
 
 #endif
