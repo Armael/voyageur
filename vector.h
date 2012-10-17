@@ -22,7 +22,10 @@ void* vector_get(Vector* v, int id);
 
 /* Fonction permettant de modifier la valeur d'une case du tableau
    connaissant son indice. Si le tableau est trop petit il est étendu
-   de manière à ce que sa nouvelle taille convienne */
+   de manière à ce que sa nouvelle taille convienne. L'expansion du
+   tableau se fait en doublant la taille à chaque fois. Ceci garantit
+   une complexité en O(1) amorti (Cormen chap. 17 section 4).
+*/
 void vector_set(Vector* v, int id, void* value);
 
 #endif
