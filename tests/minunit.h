@@ -13,6 +13,9 @@ extern int tests_failed;
 #define ANSI_BRED   (isatty(1)?"\033[1;31m":"")
 #define ANSI_NORMAL (isatty(1)?"\033[0m":"")
 
+#define mu_INIT() int tests_run; \
+  int tests_failed
+
 #define mu_assert(test, message) do { if (!(test)) return message; } while (0)
 
 #define START_TEST(__testname) \
