@@ -2,9 +2,6 @@
 #include "graph.h"
 #include "ftree.h"
 
-#define SET_FTREE(v,i,t) (vector_set(v,i,(void*)t))
-#define GET_FTREE(v,i) ((Ftree*)vector_get(v,i))
-
 Forest* initForestFromGraph(Graph* g) {
   Forest* f = malloc(sizeof(Forest));
   

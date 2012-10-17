@@ -2,6 +2,9 @@
 #define FTREE_H_INCLUDED
 #include "vector.h"
 
+#define GET_FTREE(v,i) ((Ftree*)vector_get(v,i))
+#define SET_FTREE(v,i,t) (vector_set(v,i,(void*)t))
+
 typedef struct ftree {
   void *data;
   Vector *neighbors;
