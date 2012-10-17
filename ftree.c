@@ -15,7 +15,7 @@ void ftree_free_(Ftree *tree, Ftree *previous) {
   int i = 0;
   for(i = 0; i < tree->neighborsNb; i++) {
     if(vector_get(tree->neighbors, i) != previous) {
-      ftree_free(vector_get(tree->neighbors, i), tree);
+      ftree_free_(vector_get(tree->neighbors, i), tree);
     }
   }
   vector_free(tree->neighbors);
