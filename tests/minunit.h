@@ -25,25 +25,24 @@ extern int tests_failed;
 
 #define mu_run_test(__test) do { char *__message = __test(); tests_run++; \
     if (__message) {							\
-      printf("%s[Failed]%s Test \'%s\' (n°%d) : %s%s\n",		\
-	     ANSI_BRED, ANSI_RED, #__test, tests_run,			\
-	     __message, ANSI_NORMAL);					\
+      printf("%s[Failed]%s Testing \'%s\' (n°%d) : %s\n",		\
+	     ANSI_BRED, ANSI_NORMAL, #__test, tests_run,		\
+	     __message);						\
       tests_failed++;							\
     } else {								\
-      printf("%s[OK]%s Test \'%s\' (n°%d) %s\n",			\
-	     ANSI_BGREEN, ANSI_GREEN, #__test, tests_run,		\
-	     ANSI_NORMAL);						\
+      printf("%s[OK]%s Testing \'%s\' (n°%d)\n",			\
+	     ANSI_BGREEN, ANSI_NORMAL, #__test, tests_run);		\
     }									\
   } while (0)
 
 #define mu_summary() do {						\
     if(!tests_failed) {							\
-      printf("%s[OK]%s All (%d) tests passed !%s\n",			\
-	     ANSI_BGREEN, ANSI_GREEN, tests_run, ANSI_NORMAL);		\
+      printf("%s[OK]%s All (%d) tests passed !\n",			\
+	     ANSI_BGREEN, ANSI_NORMAL, tests_run);			\
     } else {								\
-      printf("%s[Fail]%s %d test%s failed.%s\n",			\
-	     ANSI_BRED, ANSI_RED, tests_failed,				\
-	     (tests_failed>1)?"s":"", ANSI_NORMAL);			\
+      printf("%s[Fail]%s %d test%s failed.\n",				\
+	     ANSI_BRED, ANSI_NORMAL, tests_failed,			\
+	     (tests_failed>1)?"s":"");					\
     }									\
   } while (0)
 
