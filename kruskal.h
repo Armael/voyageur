@@ -41,4 +41,13 @@ Kedge* KedgeListFromGraph(Graph* g, Forest* f);
    O(n log(n)) */
 Kedge* mergeSort(Kedge* list);
 
+/* Libère la mémoire occupée par une forêt. Il ne doit pas y avoir de
+   doublons dans les f->treesNb arbres de la forêt - s'il y en a, on
+   peut préalablement les remplacer par NULL pour indiquer un arbre
+   absent */
+void freeForest(Forest*f);
+
+/* Libère la mémoire occupée par une liste de Kedges */
+void freeKedgeList(Kedge* list);
+
 #endif

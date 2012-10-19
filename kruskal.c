@@ -110,3 +110,28 @@ Kedge* mergeSort(Kedge* list) {
     return merge(part1, part2);
   }
 }
+
+/* Libère la mémoire occupée par une forêt. Il ne doit pas y avoir de
+   doublons dans les f->treesNb arbres de la forêt - s'il y en a, on
+   peut préalablement les remplacer par NULL pour indiquer un arbre
+   absent */
+void freeForest(Forest* f) {
+  int i;
+  for(i=0; i < f->treensNb; i++) {
+    if(GET_FTREE(f->trees, i))
+      ftree_free(GET_FTREE(f->trees, i));
+  }
+  
+  vector_free(f->trees);
+  free(f);
+}
+
+/* Libère la mémoire occupée par une liste de Kedges */
+void freeKedgeList(Kedge* list) {
+  Kedge* e;
+  while(list != NULL) {
+    e = list->next;
+    free(list);
+    list = e;
+  }
+}
