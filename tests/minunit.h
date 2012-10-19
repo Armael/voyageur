@@ -18,20 +18,20 @@ extern int tests_failed;
 
 #define mu_assert(test, message) do { if (!(test)) return message; } while (0)
 
-#define START_TEST(__testname) \
-  static char* __testname() { \
+#define START_TEST(testname) \
+  static char* __test_##testname() { \
 
 #define END_TEST return NULL; }
 
-#define mu_run_test(__test) do { char *__message = __test(); tests_run++; \
+#define mu_run_test(test) do { char *__message = __test_##test(); tests_run++; \
     if (__message) {							\
       printf("%s[Failed]%s Testing \'%s\' (n°%d) : %s\n",		\
-	     ANSI_BRED, ANSI_NORMAL, #__test, tests_run,		\
+	     ANSI_BRED, ANSI_NORMAL, #test, tests_run,			\
 	     __message);						\
       tests_failed++;							\
     } else {								\
       printf("%s[OK]%s Testing \'%s\' (n°%d)\n",			\
-	     ANSI_BGREEN, ANSI_NORMAL, #__test, tests_run);		\
+	     ANSI_BGREEN, ANSI_NORMAL, #test, tests_run);		\
     }									\
   } while (0)
 
