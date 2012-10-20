@@ -9,6 +9,7 @@ Graph* graph_new() {
   Graph* g = malloc(sizeof(Graph));
   g->nodes = vector_new();
   g->nodesNb = 0;
+  return g;
 }
 
 /* Crée un nouveau nœud dans le graphe, et renvoie son numéro.  La
@@ -60,14 +61,14 @@ void graph_addEdge(Graph* g, int n1, int n2, int weight) {
 }
 
 /* Libère la mémoire occupée par le graphe (nœuds et arêtes) */
-Edge* graph_free(Graph* g) {
+void graph_free(Graph* g) {
   int i;
   for(i=0; i < g->nodesNb; i++) {
     Edge* e = GET_EDGE(g->nodes, i);
     while(e != NULL) {
       Edge* next = e->next;
       free(e);
-      e = e->next;
+      e = next;
     }
   }
 
