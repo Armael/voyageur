@@ -1,6 +1,9 @@
+#include <stdlib.h>
+
 #include "vector.h"
 #include "graph.h"
 #include "ftree.h"
+#include "kruskal.h"
 
 /* À partir d'un graphe donné, crée une forêt où chaque Ftree est
    réduit à un nœud, et représente un nœud du graphe. Il est placé au
@@ -14,7 +17,7 @@ Forest* initForestFromGraph(Graph* g) {
 
   int i;
   for(i=0; i < f->treesNb; i++) {
-    SET_FTREE(f->trees, i, ftree_create((void*)i));
+    SET_FTREE(f->trees, i, ftree_create(NULL + i));
   }
 
   return f;
@@ -70,7 +73,7 @@ void split(Kedge* list, Kedge** part1, Kedge** part2) {
       list->next = *part1;
       *part1 = list;
     } else {
-      list->nest = *part2;
+      list->next = *part2;
       *part2 = list;
     }
     list = next;
@@ -89,10 +92,10 @@ Kedge* merge(Kedge* part1, Kedge* part2) {
   }
 
   if(part1->weight < part2->weight) {
-    part1->next = merge(part1->next, part2);
-    return part1;
+    part1->next = merge(part1->next, part2); 
+   return part1;
   } else {
-    part2->next = merge(part1; part2->next);
+    part2->next = merge(part1, part2->next);
     return part2;
   }
 }
@@ -102,7 +105,7 @@ Kedge* mergeSort(Kedge* list) {
   if(list == NULL) {
     return list;
   } else {
-    Kedge* part1, part2;
+    Kedge *part1, *part2;
     split(list, &part1, &part2);
     part1 = mergeSort(part1);
     part2 = mergeSort(part2);
@@ -117,7 +120,7 @@ Kedge* mergeSort(Kedge* list) {
    absent */
 void freeForest(Forest* f) {
   int i;
-  for(i=0; i < f->treensNb; i++) {
+  for(i=0; i < f->treesNb; i++) {
     if(GET_FTREE(f->trees, i))
       ftree_free(GET_FTREE(f->trees, i));
   }
