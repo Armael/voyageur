@@ -45,7 +45,7 @@ Kedge* mergeSort(Kedge* list);
    doublons dans les f->treesNb arbres de la forêt - s'il y en a, on
    peut préalablement les remplacer par NULL pour indiquer un arbre
    absent */
-void freeForest(Forest*f);
+void freeForest(Forest* f);
 
 /* Libère la mémoire occupée par une liste de Kedges */
 void freeKedgeList(Kedge* list);
