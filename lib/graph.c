@@ -41,7 +41,7 @@ Graph* graph_newWithNodes(int nodesNb) {
 /* Ajoute une arête entre les nœuds d'indices n1 et n2, et de poids
    weight. Si n1 ou n2 n'est pas dans le graphe, la fonction ne fait
    rien. */
-void graph_addEdge(Graph* g, int n1, int n2, int weight) {
+void graph_addEdge(Graph* g, int n1, int n2, float weight) {
   if(n1 < g->nodesNb && n2 < g->nodesNb) {
     /* Il faut ajouter deux arêtes : n1->n2 et n2->n1 car le graphe
        n'est pas orienté */

@@ -8,7 +8,7 @@
 
 typedef struct edge {
   int dest;
-  int weight;
+  float weight;
   
   struct edge* next;
 } Edge;
@@ -33,7 +33,7 @@ Graph* graph_newWithNodes(int nodesNb);
 /* Ajoute une arête entre les nœuds d'indices n1 et n2, et de poids
    weight. Si n1 ou n2 n'est pas dans le graphe, la fonction de fait
    rien. */
-void graph_addEdge(Graph* g, int n1, int n2, int weight);
+void graph_addEdge(Graph* g, int n1, int n2, float weight);
 
 /* Libère la mémoire occupée par le graphe (nœuds et arêtes) */
 void graph_free(Graph* g);

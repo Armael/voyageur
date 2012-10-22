@@ -22,7 +22,7 @@ typedef struct kedge {
   int n2;
   Ftree* addr2;
 
-  int weight;
+  float weight;
 
   struct kedge *next;
 } Kedge;
