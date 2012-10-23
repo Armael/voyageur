@@ -36,5 +36,5 @@ int main() {
   vector_free(v);
 
   mu_summary();
-  return tests_failed;
+  return __tests_failed;
 }

@@ -31,8 +31,7 @@ int main() {
   ftree_free(t1);
 
   mu_summary();
-
-  return 0;
+  return __tests_failed;
 }
   
 

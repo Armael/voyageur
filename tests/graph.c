@@ -35,7 +35,7 @@ START_TEST(test_edge) {
 
   mu_assert(vector_get(g->nodes, n2) != NULL,
 	    "Arête 2->1 absente; le graphe n'est pas orienté, \
-            il faut des arêtes dans les deux sens");
+il faut des arêtes dans les deux sens");
   mu_assert(((Edge*)vector_get(g->nodes, n2))->dest == n1,
 	    "Mauvaise destination de l'arête 2->1");
   mu_assert(((Edge*)vector_get(g->nodes, n2))->weight == 42,
@@ -55,6 +55,5 @@ int main() {
   graph_free(g);
 
   mu_summary();
-
-  return 0;
+  return __tests_failed;
 }

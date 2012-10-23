@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <unistd.h>
 
-extern int tests_run;
-extern int tests_failed;
+extern int __tests_run;
+extern int __tests_failed;
 
 #define ANSI_GREEN  (isatty(1)?"\033[0;32m":"")
 #define ANSI_RED    (isatty(1)?"\033[0;31m":"")
@@ -13,36 +13,37 @@ extern int tests_failed;
 #define ANSI_BRED   (isatty(1)?"\033[1;31m":"")
 #define ANSI_NORMAL (isatty(1)?"\033[0m":"")
 
-#define mu_INIT() int tests_run; \
-  int tests_failed
+#define mu_INIT() int __tests_run;		\
+  int __tests_failed
+
 
 #define mu_assert(test, message) do { if (!(test)) return message; } while (0)
 
-#define START_TEST(testname) \
-  static char* __test_##testname() { \
-
+#define START_TEST(testname)			\
+  static char* __test_##testname() {		\
+  
 #define END_TEST return NULL; }
 
-#define mu_run_test(test) do { char *__message = __test_##test(); tests_run++; \
+#define mu_run_test(test) do { char *__message = __test_##test(); __tests_run++; \
     if (__message) {							\
       printf("%s[Failed]%s Testing \'%s\' (n°%d) : %s\n",		\
-	     ANSI_BRED, ANSI_NORMAL, #test, tests_run,			\
+	     ANSI_BRED, ANSI_NORMAL, #test, __tests_run,		\
 	     __message);						\
-      tests_failed++;							\
+      __tests_failed++;							\
     } else {								\
       printf("%s[OK]%s Testing \'%s\' (n°%d)\n",			\
-	     ANSI_BGREEN, ANSI_NORMAL, #test, tests_run);		\
+	     ANSI_BGREEN, ANSI_NORMAL, #test, __tests_run);		\
     }									\
   } while (0)
 
 #define mu_summary() do {						\
-    if(!tests_failed) {							\
+    if(!__tests_failed) {						\
       printf("%s[OK]%s All (%d) tests passed !\n",			\
-	     ANSI_BGREEN, ANSI_NORMAL, tests_run);			\
+	     ANSI_BGREEN, ANSI_NORMAL, __tests_run);			\
     } else {								\
       printf("%s[Fail]%s %d test%s failed.\n",				\
-	     ANSI_BRED, ANSI_NORMAL, tests_failed,			\
-	     (tests_failed>1)?"s":"");					\
+	     ANSI_BRED, ANSI_NORMAL, __tests_failed,			\
+	     (__tests_failed>1)?"s":"");				\
     }									\
   } while (0)
 
