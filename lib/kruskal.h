@@ -1,3 +1,7 @@
+#include "vector.h"
+#include "graph.h"
+#include "ftree.h"
+
 #ifndef KRUSKAL_H_INCLUDED
 #define KRUSKAL_H_INCLUDED
 
@@ -40,6 +44,8 @@ Kedge* KedgeListFromGraph(Graph* g, Forest* f);
 /* Fait un tri fusion d'une liste d'arêtes Kedges. Complexité
    O(n log(n)) */
 Kedge* mergeSort(Kedge* list);
+
+Ftree* kruskal(Graph* g);
 
 /* Libère la mémoire occupée par une forêt. Il ne doit pas y avoir de
    doublons dans les f->treesNb arbres de la forêt - s'il y en a, on
