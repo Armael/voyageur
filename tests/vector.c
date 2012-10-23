@@ -5,8 +5,7 @@
 
 static Vector* v = NULL;
 
-int tests_run = 0;
-int tests_failed = 0;
+mu_INIT();
 
 START_TEST(test_null_vect) {
   mu_assert(v != NULL,
