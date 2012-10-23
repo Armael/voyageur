@@ -6,6 +6,7 @@
 
 extern int __tests_run;
 extern int __tests_failed;
+extern char __errbuf[];
 
 #define ANSI_GREEN  (isatty(1)?"\033[0;32m":"")
 #define ANSI_RED    (isatty(1)?"\033[0;31m":"")
@@ -13,11 +14,20 @@ extern int __tests_failed;
 #define ANSI_BRED   (isatty(1)?"\033[1;31m":"")
 #define ANSI_NORMAL (isatty(1)?"\033[0m":"")
 
+#define ERRBUF_LEN 200
+
 #define mu_INIT() int __tests_run;		\
-  int __tests_failed
+  int __tests_failed;				\
+  char __errbuf[ERRBUF_LEN]
 
 
-#define mu_assert(test, message) do { if (!(test)) return message; } while (0)
+#define mu_assert(test, message, ...) do {			\
+  if (!(test)) {						\
+    snprintf(__errbuf, ERRBUF_LEN, message, ##__VA_ARGS__);	\
+    __errbuf[ERRBUF_LEN-1] = '\0';				\
+    return __errbuf;						\
+  }								\
+} while (0)
 
 #define START_TEST(testname)			\
   static char* __test_##testname() {		\

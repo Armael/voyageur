@@ -17,7 +17,8 @@ START_TEST(test_read_10) {
   int i;
   for(i=0; i < 10; i++) {
     mu_assert(i == (int)vector_get(v, i),
-	      "Information dans le tableau erronée");
+	      "Information dans le tableau erronée (%d au lieu de %d)",
+	      (int)vector_get(v, i), i);
   }
 }
 END_TEST
