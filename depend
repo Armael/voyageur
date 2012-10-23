@@ -1,0 +1,13 @@
+#!/bin/sh
+
+DIR="$1"
+shift 1
+
+case "$DIR" in
+    "" | ".")
+        gcc -MM "$@" | sed -e "s#^\(.*\)\.o:#\1.dep \1.o:#"
+        ;;
+    *)
+        gcc -MM "$@" | sed -e "s#^\(.*\)\.o:#$DIR/\1.dep $DIR/\1.o:#"
+        ;;
+esac
