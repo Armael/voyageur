@@ -14,11 +14,11 @@ START_TEST(test_add_nodes) {
   n2 = graph_addNode(g);
   n3 = graph_addNode(g);
 
-  mu_assert(GET_EDGE(g->nodes, n1) == NULL,
+  mu_assert(vector_get(g->nodes, n1) == NULL,
 	    "Nouveau nœud 1 mal initialisé");
-  mu_assert(GET_EDGE(g->nodes, n2) == NULL,
+  mu_assert(vector_get(g->nodes, n2) == NULL,
 	    "Nouveau nœud 2 mal initialisé");
-  mu_assert(GET_EDGE(g->nodes, n3) == NULL,
+  mu_assert(vector_get(g->nodes, n3) == NULL,
 	    "Nouveau nœud 3 mal initialisé");
 }
 END_TEST
@@ -26,19 +26,19 @@ END_TEST
 START_TEST(test_edge) {
   graph_addEdge(g, n1, n2, 42);
 
-  mu_assert(GET_EDGE(g->nodes, n1) != NULL,
+  mu_assert(vector_get(g->nodes, n1) != NULL,
 	    "Arête 1->2 absente");
-  mu_assert(GET_EDGE(g->nodes, n1)->dest == n2,
+  mu_assert(((Edge*)vector_get(g->nodes, n1))->dest == n2,
 	    "Mauvaise destination de l'arête 1->2");
-  mu_assert(GET_EDGE(g->nodes, n1)->weight == 42,
+  mu_assert(((Edge*)vector_get(g->nodes, n1))->weight == 42,
 	    "Mauvais poids de l'arête 1->2");
 
-  mu_assert(GET_EDGE(g->nodes, n2) != NULL,
+  mu_assert(vector_get(g->nodes, n2) != NULL,
 	    "Arête 2->1 absente; le graphe n'est pas orienté, \
             il faut des arêtes dans les deux sens");
-  mu_assert(GET_EDGE(g->nodes, n2)->dest == n1,
+  mu_assert(((Edge*)vector_get(g->nodes, n2))->dest == n1,
 	    "Mauvaise destination de l'arête 2->1");
-  mu_assert(GET_EDGE(g->nodes, n2)->weight == 42,
+  mu_assert(((Edge*)vector_get(g->nodes, n2))->weight == 42,
 	    "Mauvais poids de l'arête 2->1");
 }
 END_TEST

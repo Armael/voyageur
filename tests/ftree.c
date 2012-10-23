@@ -15,9 +15,9 @@ START_TEST(test_join) {
 	    "1 n'a pas un nombre de voisins égal à 1");
   mu_assert(t2->neighborsNb == 1,
 	    "2 n'a pas un nombre de voisins égal à 1");
-  mu_assert(GET_FTREE(t1->neighbors, t1->neighborsNb-1) == t2,
+  mu_assert(vector_get(t1->neighbors, t1->neighborsNb-1) == t2,
 	    "2 n'est pas le dernier voisin de 1");
-  mu_assert(GET_FTREE(t2->neighbors, t2->neighborsNb-1) == t1,
+  mu_assert(vector_get(t2->neighbors, t2->neighborsNb-1) == t1,
 	    "1 n'est pas le dernier voisin de 2");
 }
 END_TEST

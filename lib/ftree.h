@@ -11,11 +11,6 @@ typedef struct ftree {
   int neighborsNb;
 } Ftree;
 
-/* Macros permettant de lire/écrire facilement des Ftrees dans un
-   Vector */
-#define GET_FTREE(v,i) ((Ftree*)vector_get(v,i))
-#define SET_FTREE(v,i,t) (vector_set(v,i,(void*)t))
-
 /* Retourne un Ftree composé d'un unique nœud, contenant la data
    passée en argument. Celui-ci n'a donc pas de voisins
    initialement */
