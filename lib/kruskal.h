@@ -45,6 +45,8 @@ Kedge* KedgeListFromGraph(Graph* g, Forest* f);
    O(n log(n)) */
 Kedge* mergeSort(Kedge* list);
 
+/* Applique l'algorithme de Kruskal, calculant l'arbre couvrant
+   minimal d'un graphe */
 Ftree* kruskal(Graph* g);
 
 /* Libère la mémoire occupée par une forêt. Il ne doit pas y avoir de

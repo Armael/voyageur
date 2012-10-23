@@ -114,24 +114,34 @@ Kedge* mergeSort(Kedge* list) {
   }
 }
 
+/* Applique l'algorithme de Kruskal, calculant l'arbre couvrant
+   minimal d'un graphe */
 Ftree* kruskal(Graph* g) {
   Forest* f = initForestFromGraph(g);
   Kedge* ke = KedgeListFromGraph(g, f);
   ke = mergeSort(ke);
   int i;
   while(ke != NULL) {
-    if(GET_FTREE(f->trees, ke->n1) != GET_FTREE(f->trees, ke->n2)) {
+    if(vector_get(f->trees, ke->n1) != vector_get(f->trees, ke->n2)) {
       ftree_join(ke->addr1, ke->addr2);
-      Ftree* fn2 = GET_FTREE(f->trees, ke->n2);
+      Ftree* fn2 = vector_get(f->trees, ke->n2);
       for(i=0; i < f->treesNb; i++) {
-        if(GET_FTREE(f->trees, i) == fn2) {
-          SET_FTREE(f->trees, i, GET_FTREE(f->trees, ke->n1));
+        if(vector_get(f->trees, i) == fn2) {
+          vector_set(f->trees, i, vector_get(f->trees, ke->n1));
         }
       }
     }
     ke = ke->next;
   }
-  return GET_FTREE(f->trees, 0);
+
+  /* Il n'y a au final qu'un arbre, et on ne veut pas le libérer
+     puisqu'on le retourne */
+  f->treesNb = 0;
+  freeForest(f);
+
+  freeKedgeList(ke);
+  
+  return vector_get(f->trees, 0);
 }
 
 /* Libère la mémoire occupée par une forêt. Il ne doit pas y avoir de
@@ -141,8 +151,8 @@ Ftree* kruskal(Graph* g) {
 void freeForest(Forest* f) {
   int i;
   for(i=0; i < f->treesNb; i++) {
-    if(GET_FTREE(f->trees, i))
-      ftree_free(GET_FTREE(f->trees, i));
+    if(vector_get(f->trees, i))
+      ftree_free(vector_get(f->trees, i));
   }
   
   vector_free(f->trees);
