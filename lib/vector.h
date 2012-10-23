@@ -12,6 +12,9 @@ Vector* vector_new();
 /* Renvoie un nouveau tableau préalloué à la taille indiquée */
 Vector* vector_newWithSize(int size);
 
+/* Initialise les nb premiers éléments du vector à la valeur value */
+void vector_fill(Vector* v, int nb, void* value);
+
 /* Libère la mémoire occupée par le tableau */
 void vector_free(Vector* v);
 
