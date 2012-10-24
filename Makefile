@@ -1,5 +1,5 @@
 SRC := voyageur.c
-LIBS := vector.c graph.c ftree.c kruskal.c
+LIBS := vector.c graph.c
 
 SRC := $(patsubst %,src/%,$(SRC))
 LIBS := $(patsubst %,lib/%,$(LIBS))
@@ -25,7 +25,7 @@ CFLAGS += -Ilib -Itests
 all: voyageur
 
 voyageur: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ)
+	$(CC) $(CFLAGS) -lm -o $@ $(OBJ)
 
 build-tests: $(BIN_TEST)
 
