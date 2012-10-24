@@ -17,7 +17,7 @@ OBJ_TEST := $(patsubst %.c,%.o,$(SRC_TEST)) $(LIBS_OBJ_TEST)
 DEP_TEST := ${OBJ_TEST:.o=.dep}
 
 CC := gcc
-CFLAGS := -Wall -Wextra -Wunused -Wconversion -Wno-sign-conversion -std=c99
+CFLAGS := -Wall -Wextra -Wunused -Wconversion -Wno-sign-conversion
 CFLAGS += -Ilib -Itests
 
 .PHONY: all build-tests tests clean mproper
