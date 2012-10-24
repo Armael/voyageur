@@ -33,9 +33,10 @@ $(BIN_TEST): $(DEP_TEST) $(OBJ_TEST)
 	$(CC) $(CFLAGS) -o $@ $@.o $(LIBS_OBJ_TEST)
 
 tests: build-tests
-	for test in $(BIN_TEST); do \
+	@(for test in $(BIN_TEST); do \
+		echo "=> Running $$test"; \
 		$$test; \
-	done
+	done)
 
 clean: 
 	rm -rf $(OBJ) $(OBJ_TEST)
