@@ -6,8 +6,8 @@ LIBS := $(patsubst %,lib/%,$(LIBS))
 OBJ := $(patsubst %.c,%.o,$(SRC) $(LIBS))
 DEP := ${OBJ:.o=.dep}
 
-SRC_TEST := vector.c graph.c ftree.c
-LIBS_TEST := vector.c graph.c ftree.c
+SRC_TEST := vector.c graph.c ftree.c kruskal.c
+LIBS_TEST := vector.c graph.c ftree.c kruskal.c
 
 SRC_TEST := $(patsubst %,tests/%,$(SRC_TEST))
 LIBS_TEST := $(patsubst %,lib/%,$(LIBS_TEST))
