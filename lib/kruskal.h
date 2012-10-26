@@ -31,6 +31,10 @@ typedef struct kedge {
   struct kedge *next;
 } Kedge;
 
+/* La fonction cons : ajoute un élément en tête de liste */
+Kedge* kruskal_cons(Kedge* list, int n1, Ftree* addr1,
+                    int n2, Ftree* addr2, float weight);
+
 /* À partir d'un graphe donné, crée une forêt où chaque Ftree est
    réduit à un nœud, et représente un nœud du graphe. Il est placé au
    même indice que dans le graphe, et contient cet indice */
