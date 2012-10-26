@@ -17,7 +17,7 @@ Forest* initForestFromGraph(Graph* g) {
 
   int i;
   for(i=0; i < f->treesNb; i++) {
-    SET_FTREE(f->trees, i, ftree_create(NULL + i));
+    vector_set(f->trees, i, ftree_create(NULL + i));
   }
 
   return f;
@@ -31,7 +31,7 @@ Kedge* KedgeListFromGraph(Graph* g, Forest* f) {
 
   int i;
   for(i=0; i < g->nodesNb; i++) {
-    Edge* e = GET_EDGE(g->nodes, i);
+    Edge* e = vector_get(g->nodes, i);
     /* Parcours de la liste chainée des arêtes partant du nœud. On
      obtient bien des arêtes en double (obtenues depuis a->b et b->a)
      mais en pratique, l'algorithme de Kruskal n'est pas perturbé par
@@ -39,9 +39,9 @@ Kedge* KedgeListFromGraph(Graph* g, Forest* f) {
     while(e != NULL) {
       Kedge* new = malloc(sizeof(Kedge));
       new->n1 = i;
-      new->addr1 = GET_FTREE(f->trees, i);
+      new->addr1 = vector_get(f->trees, i);
       new->n2 = e->dest;
-      new->addr2 = GET_FTREE(f->trees, e->dest);
+      new->addr2 = vector_get(f->trees, e->dest);
       new->weight = e->weight;
       new->next = klist;
 
