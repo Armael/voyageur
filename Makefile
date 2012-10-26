@@ -33,6 +33,7 @@ $(BIN_TEST): $(DEP_TEST) $(OBJ_TEST)
 	$(CC) $(CFLAGS) -o $@ $@.o $(LIBS_OBJ_TEST)
 
 tests: build-tests
+	@(echo)
 	@(for test in $(BIN_TEST); do \
 		echo "=> Running $$test"; \
 		$$test; \
