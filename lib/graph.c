@@ -94,7 +94,7 @@ void graph_toNeato(Graph* g, char* filename) {
   for(i=0; i < g->nodesNb; i++) {
     Edge* e = vector_get(g->nodes, i);
     while(e != NULL) {
-      fprintf(f, "  %d -- %d [label=\"%d\"];\n", i, e->dest, e->weight);
+      fprintf(f, "  %d -- %d [label=\"%f\"];\n", i, e->dest, e->weight);
       e = e->next;
     }
   }
