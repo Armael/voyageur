@@ -4,6 +4,16 @@
 #include "graph.h"
 #include "vector.h"
 
+Edge* cons(Edge* list, int dest, float weight) {
+  Edge* new = malloc(sizeof(Edge));
+  
+  new->dest = dest;
+  new->weight = weight;
+  new->next = list;
+
+  return new;
+}
+
 /* Renvoie un nouveau graphe vide (sans nœuds ni arêtes) */
 Graph* graph_new() {
   Graph* g = malloc(sizeof(Graph));
@@ -45,15 +55,8 @@ void graph_addEdge(Graph* g, int n1, int n2, float weight) {
   if(n1 < g->nodesNb && n2 < g->nodesNb) {
     /* Il faut ajouter deux arêtes : n1->n2 et n2->n1 car le graphe
        n'est pas orienté */
-    Edge* e1 = malloc(sizeof(Edge));
-    Edge* e2 = malloc(sizeof(Edge));
-
-    e1->dest = n2;
-    e2->dest = n1;
-    e1->weight = e2->weight = weight;
-
-    e1->next = vector_get(g->nodes, n1);
-    e2->next = vector_get(g->nodes, n2);
+    Edge* e1 = cons(vector_get(g->nodes, n1), n2, weight);
+    Edge* e2 = cons(vector_get(g->nodes, n2), n1, weight);
 
     vector_set(g->nodes, n1, e1);
     vector_set(g->nodes, n2, e2);

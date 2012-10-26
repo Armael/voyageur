@@ -5,6 +5,20 @@
 #include "ftree.h"
 #include "kruskal.h"
 
+Kedge* cons(Kedge* list, int n1, Ftree* addr1, 
+	    int n2, Ftree* addr2, float weight) {
+  Kedge* new = malloc(sizeof(Kedge));
+
+  new->n1 = n1;
+  new->addr1 = addr1;
+  new->n2 = n2;
+  new->addr2 = addr2;
+  new->weight = weight;
+  new->next = list;
+
+  return list;
+}
+
 /* À partir d'un graphe donné, crée une forêt où chaque Ftree est
    réduit à un nœud, et représente un nœud du graphe. Il est placé au
    même indice que dans le graphe, et contient cet indice */
@@ -37,15 +51,10 @@ Kedge* KedgeListFromGraph(Graph* g, Forest* f) {
      mais en pratique, l'algorithme de Kruskal n'est pas perturbé par
      la présence de doublons (ceux-ci sont ignorés) */
     while(e != NULL) {
-      Kedge* new = malloc(sizeof(Kedge));
-      new->n1 = i;
-      new->addr1 = vector_get(f->trees, i);
-      new->n2 = e->dest;
-      new->addr2 = vector_get(f->trees, e->dest);
-      new->weight = e->weight;
-      new->next = klist;
+      klist = cons(klist, i, vector_get(f->trees, i),
+		   e->dest, vector_get(f->trees, e->dest),
+		   e->weight);
 
-      klist = new;
       e = e->next;
     }
   }
