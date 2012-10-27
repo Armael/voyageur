@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <math.h>
 
@@ -69,6 +70,28 @@ Graph* parse_VerticesCoordinates(FILE* f) {
     return g;	
   }
   return NULL;
+}
+
+Trie* parse_Towns(FILE* f) {
+  Trie* towns = trie_new();
+
+  if(f != NULL) {
+    rewind(f);
+
+    char* line = NULL;
+    int n;
+    while(getline(&line, &n, f) != -1) {
+      char* split = strtok(line, ":");
+      split[-1] = '\0'; /* Élimination du ':' */
+      
+      float x, y;
+      sscanf(split, " %f; %f!", &x, &y);
+      towns = trie_addTown(towns, line, x, y);
+    }
+    free(line);
+  }
+
+  return towns;
 }
 
 int main() {
