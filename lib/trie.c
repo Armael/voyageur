@@ -9,6 +9,8 @@ Trie* trie_new() {
   t->coord_y = 0;
   t->is_word = 0;
   t->next = NULL;
+
+  return t;
 }
 
 /* Ajoute une ville à la trie, et insère ses coordonnées */

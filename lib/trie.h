@@ -3,12 +3,13 @@
 
 #define CHAR_NUMBER 256
 
-typedef struct trie {
+typedef struct trie Trie;
+struct trie {
   float coord_x;
   float coord_y;
   int is_word;
-  struct trie* next;
-} Trie;
+  Trie** next;
+};
 
 /* Renvoie une nouvelle trie vide */
 Trie* trie_new();
