@@ -65,6 +65,8 @@ void graph_addEdge(Graph* g, int n1, int n2, float weight) {
 
 /* Libère la mémoire occupée par le graphe (nœuds et arêtes) */
 void graph_free(Graph* g) {
+  if(g == NULL) return;
+  
   int i;
   for(i=0; i < g->nodesNb; i++) {
     Edge* e = vector_get(g->nodes, i);

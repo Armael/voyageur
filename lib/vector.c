@@ -31,8 +31,10 @@ void vector_fill(Vector* v, int nb, void* value) {
 
 /* Libère la mémoire occupée par le tableau */
 void vector_free(Vector* v) {
-  free(v->content);
-  free(v);
+  if(v != NULL) {
+    free(v->content);
+    free(v);
+  }
 }
 
 /* Fonction permettant d'accéder à un élément connaissant son
