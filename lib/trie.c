@@ -1,6 +1,5 @@
 #include <stdlib.h>
 
-#include "vector.h"
 #include "trie.h"
 
 /* Renvoie une nouvelle trie vide */
@@ -24,11 +23,10 @@ Trie* trie_addTown(Trie* t, char* name, float x, float y) {
     t->coord_y = y;
   } else {
     if(t->next == NULL) {
-      t->next = vector_fill(vector_newWithSize(CHAR_NUMBER), CHAR_NUMBER, NULL);
+      t->next = calloc(CHAR_NUMBER, sizeof(Trie));
     }
     
-    vector_set(t->next, name[0], trie_addTown(vector_get(t->next, name[0]),
-					      &name[1], x, y));
+    t->next[name[0]] = trie_addTown(t->next[name[0]], &name[1], x, y));
   }
   return t;
 }
@@ -40,11 +38,11 @@ void trie_free(Trie* t) {
     if(t->next != NULL) {
       for(i=0; i < CHAR_NUMBER; i++) {
 	Trie* child;
-	if((child = vector_get(t->next, i)) != NULL) {
+	if((child = t->next[i]) != NULL) {
           trie_free(child);
 	}
       }
-      vector_free(t->next);
+      free(t->next);
     }
   free(t);
   }
@@ -71,8 +69,7 @@ int trie_getCoord(Trie* t, char* name, float* x, float* y) {
     if(t->next == NULL) {
       return -1;
     } else {
-      return trie_getCoord(vector_get(t->next, name[0]),
-			   &name[1], x, y);
+      return trie_getCoord(t->next[name[0]], &name[1], x, y);
     }
   }
 }
