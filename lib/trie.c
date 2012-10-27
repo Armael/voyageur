@@ -3,6 +3,7 @@
 #include "vector.h"
 #include "trie.h"
 
+/* Renvoie une nouvelle trie vide */
 Trie* trie_new() {
   Trie* t = malloc(sizeof(Trie));
   t->coord_x = -1;
@@ -11,6 +12,7 @@ Trie* trie_new() {
   t->next = NULL;
 }
 
+/* Ajoute une ville à la trie, et insère ses coordonnées */
 Trie* trie_addTown(Trie* t, char* name, int x, int y) {
   if(t == NULL) {
     t = trie_new();
@@ -31,6 +33,7 @@ Trie* trie_addTown(Trie* t, char* name, int x, int y) {
   return t;
 }
 
+/* Libère la mémoire occupée par une trie */
 void trie_free(Trie* t) {
   int i;
   if(t != NULL) {
@@ -46,6 +49,11 @@ void trie_free(Trie* t) {
   free(t);
   }
 }
+
+/* Retourne les coordonnées d'une ville de la trie d'après son nom.
+ Si la fonction retourne -1, alors la ville n'a pas été trouvée dans
+ la trie. Si au contraire elle a été trouvée, la fonction retourne
+ 0 */
 
 int trie_getCoord(Trie* t, char* name, int* x, int* y) {
    if(t == NULL) {
