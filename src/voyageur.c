@@ -42,7 +42,9 @@ Graph* parse(FILE* f) {
     int i;
     size_t n;
     char* pos;
-    for(fscanf(f, "%d: ", &i); getline(&pos, &n, f) != -1;) {
+    int ret;
+    while((ret = fscanf(f, "%d: ", &i)) && (ret != EOF)) {
+      getline(&pos, &n, f);
       vector_set(v, i, pos);
     }
 
