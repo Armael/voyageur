@@ -26,7 +26,7 @@ Trie* trie_addTown(Trie* t, char* name, float x, float y) {
       t->next = calloc(CHAR_NUMBER, sizeof(Trie));
     }
     
-    t->next[name[0]] = trie_addTown(t->next[name[0]], &name[1], x, y));
+    t->next[(int)name[0]] = trie_addTown(t->next[(int)name[0]], &name[1], x, y);
   }
   return t;
 }
@@ -69,7 +69,7 @@ int trie_getCoord(Trie* t, char* name, float* x, float* y) {
     if(t->next == NULL) {
       return -1;
     } else {
-      return trie_getCoord(t->next[name[0]], &name[1], x, y);
+      return trie_getCoord(t->next[(int)name[0]], &name[1], x, y);
     }
   }
 }
