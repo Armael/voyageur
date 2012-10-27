@@ -8,8 +8,8 @@
 #define CHAR_NUMBER 256
 
 typedef struct trie {
-  int coord_x;
-  int coord_y;
+  float coord_x;
+  float coord_y;
   int is_word;
   Vector* next;
 } Trie;

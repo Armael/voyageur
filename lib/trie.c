@@ -6,14 +6,14 @@
 /* Renvoie une nouvelle trie vide */
 Trie* trie_new() {
   Trie* t = malloc(sizeof(Trie));
-  t->coord_x = -1;
-  t->coord_y = -1;
+  t->coord_x = 0;
+  t->coord_y = 0;
   t->is_word = 0;
   t->next = NULL;
 }
 
 /* Ajoute une ville à la trie, et insère ses coordonnées */
-Trie* trie_addTown(Trie* t, char* name, int x, int y) {
+Trie* trie_addTown(Trie* t, char* name, float x, float y) {
   if(t == NULL) {
     t = trie_new();
   }
@@ -54,8 +54,7 @@ void trie_free(Trie* t) {
  Si la fonction retourne -1, alors la ville n'a pas été trouvée dans
  la trie. Si au contraire elle a été trouvée, la fonction retourne
  0 */
-
-int trie_getCoord(Trie* t, char* name, int* x, int* y) {
+int trie_getCoord(Trie* t, char* name, float* x, float* y) {
    if(t == NULL) {
      return -1;
    }
