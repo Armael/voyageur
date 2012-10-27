@@ -20,7 +20,8 @@ Graph* parse_basic(FILE* f) {
 
     int n1, n2;
     float w;
-    while(fscanf(f, "%d %d: %f!\n", &n1, &n2, &w) > 0) {
+    int ret;
+    while((ret = fscanf(f, "%d %d: %f!\n", &n1, &n2, &w)) && (ret != EOF)) {
       graph_addEdge(g, n1, n2, w);
     }
 
