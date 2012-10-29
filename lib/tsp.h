@@ -7,7 +7,7 @@ typedef struct {
   int id;
 
   struct Town* next;
-} Town*;
+} Town;
 
 /* Algorithme TSP */
 Town* tsp(Graph* g);
