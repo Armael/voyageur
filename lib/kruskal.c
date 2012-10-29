@@ -16,7 +16,7 @@ Kedge* kruskal_cons(Kedge* list, int n1, Ftree* addr1,
   new->weight = weight;
   new->next = list;
 
-  return list;
+  return new;
 }
 
 /* À partir d'un graphe donné, crée une forêt où chaque Ftree est
