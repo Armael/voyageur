@@ -1,11 +1,13 @@
 #include "vector.h"
 #include "ftree.h"
 #include "graph.h"
+#include "kruskal.h"
+#include "tsp.h"
 
 #include <stdlib.h>
 
 Town* townListRev(Town* list) {
-  Town* prev, cur, next;
+  Town *prev, *cur, *next;
   prev = NULL;
   cur = list;
   while(cur != NULL) {
@@ -20,12 +22,12 @@ Town* townListRev(Town* list) {
 Town* prefixTravel_(Ftree* t, Ftree* parent, Town* path) {
   int i = 0;
   Town* new_town = malloc(sizeof(Town));
-  new_town->id = (int)t->data;
+  new_town->id = (t->data).i;
   new_town->next = path;
   path = new_town;
   for(i = 0; i < t->neighborsNb; i++) {
     if(vector_get(t->neighbors, i).p != parent) {
-      path = prefixTravel(vector_get(tree->neighbors, i).p, t, path);
+      path = prefixTravel_(vector_get(t->neighbors, i).p, t, path);
     }
   }
   return path;

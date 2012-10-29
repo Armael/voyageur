@@ -3,10 +3,10 @@
 
 #include "graph.h"
 
-typedef struct {
+typedef struct town {
   int id;
 
-  struct Town* next;
+  struct town* next;
 } Town;
 
 /* Algorithme TSP */
