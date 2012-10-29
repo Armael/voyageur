@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "trie.h"
 
@@ -27,8 +28,9 @@ Trie* trie_addTown(Trie* t, char* name, float x, float y) {
     if(t->next == NULL) {
       t->next = calloc(CHAR_NUMBER, sizeof(Trie));
     }
-    
-    t->next[(int)name[0]] = trie_addTown(t->next[(int)name[0]], &name[1], x, y);
+
+    int letter = (int)(uint8_t)name[0];
+    t->next[letter] = trie_addTown(t->next[letter], &name[1], x, y);
   }
   return t;
 }
