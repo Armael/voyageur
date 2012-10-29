@@ -16,9 +16,9 @@ END_TEST
 START_TEST(test_read_10) {
   int i;
   for(i=0; i < 10; i++) {
-    mu_assert(i == (int)vector_get(v, i),
+    mu_assert(i == vector_get(v, i).i,
 	      "Information dans le tableau erronée (%d au lieu de %d)",
-	      (int)vector_get(v, i), i);
+	      vector_get(v, i).i, i);
   }
 }
 END_TEST
@@ -29,7 +29,7 @@ int main() {
 
   int i;
   for(i=0; i < 10; i++) {
-    vector_set(v, i, NULL+i);
+    vector_set(v, i, (Generic)i);
   }
 
   mu_run_test(test_read_10);

@@ -31,7 +31,7 @@ Forest* initForestFromGraph(Graph* g) {
 
   int i;
   for(i=0; i < f->treesNb; i++) {
-    vector_set(f->trees, i, ftree_create(NULL + i));
+    vector_set(f->trees, i, (Generic)(void*)ftree_create((Generic)i));
   }
 
   return f;
@@ -45,14 +45,14 @@ Kedge* KedgeListFromGraph(Graph* g, Forest* f) {
 
   int i;
   for(i=0; i < g->nodesNb; i++) {
-    Edge* e = vector_get(g->nodes, i);
+    Edge* e = vector_get(g->nodes, i).p;
     /* Parcours de la liste chainée des arêtes partant du nœud. On
      obtient bien des arêtes en double (obtenues depuis a->b et b->a)
      mais en pratique, l'algorithme de Kruskal n'est pas perturbé par
      la présence de doublons (ceux-ci sont ignorés) */
     while(e != NULL) {
-      klist = kruskal_cons(klist, i, vector_get(f->trees, i),
-		   e->dest, vector_get(f->trees, e->dest),
+      klist = kruskal_cons(klist, i, vector_get(f->trees, i).p,
+		   e->dest, vector_get(f->trees, e->dest).p,
 		   e->weight);
 
       e = e->next;
@@ -131,12 +131,12 @@ Ftree* kruskal(Graph* g) {
   ke = mergeSort(ke);
   int i;
   while(ke != NULL) {
-    if(vector_get(f->trees, ke->n1) != vector_get(f->trees, ke->n2)) {
+    if(vector_get(f->trees, ke->n1).p != vector_get(f->trees, ke->n2).p) {
       ftree_join(ke->addr1, ke->addr2);
-      Ftree* fn2 = vector_get(f->trees, ke->n2);
+      Ftree* fn2 = vector_get(f->trees, ke->n2).p;
       for(i=0; i < f->treesNb; i++) {
-        if(vector_get(f->trees, i) == fn2) {
-          vector_set(f->trees, i, vector_get(f->trees, ke->n1));
+        if(vector_get(f->trees, i).p == fn2) {
+	  vector_set(f->trees, i, (Generic)(void*)(vector_get(f->trees, ke->n1).p));
         }
       }
     }
@@ -150,7 +150,7 @@ Ftree* kruskal(Graph* g) {
 
   freeKedgeList(ke);
   
-  return vector_get(f->trees, 0);
+  return vector_get(f->trees, 0).p;
 }
 
 /* Libère la mémoire occupée par une forêt. Il ne doit pas y avoir de
@@ -160,8 +160,8 @@ Ftree* kruskal(Graph* g) {
 void freeForest(Forest* f) {
   int i;
   for(i=0; i < f->treesNb; i++) {
-    if(vector_get(f->trees, i))
-      ftree_free(vector_get(f->trees, i));
+    if(vector_get(f->trees, i).p)
+      ftree_free(vector_get(f->trees, i).p);
   }
   
   vector_free(f->trees);

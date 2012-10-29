@@ -1,8 +1,10 @@
 #ifndef VECTOR_H_INCLUDED
 #define VECTOR_H_INCLUDED
 
+#include "generic.h"
+
 typedef struct Vector {
-  void** content; /* void* array */
+  Generic* content; 
   int size;
 } Vector;
 
@@ -13,7 +15,7 @@ Vector* vector_new();
 Vector* vector_newWithSize(int size);
 
 /* Initialise les nb premiers éléments du vector à la valeur value */
-void vector_fill(Vector* v, int nb, void* value);
+void vector_fill(Vector* v, int nb, Generic value);
 
 /* Libère la mémoire occupée par le tableau */
 void vector_free(Vector* v);
@@ -21,7 +23,7 @@ void vector_free(Vector* v);
 /* Fonction permettant d'accéder à un élément connaissant son
    indice. (Il n'y a pas de protection contre le dépassement mémoire
    puisque ce n'est pas le cas avec les tableaux natifs en C */
-void* vector_get(Vector* v, int id);
+Generic vector_get(Vector* v, int id);
 
 /* Fonction permettant de modifier la valeur d'une case du tableau
    connaissant son indice. Si le tableau est trop petit il est étendu
@@ -29,6 +31,6 @@ void* vector_get(Vector* v, int id);
    tableau se fait en doublant la taille à chaque fois. Ceci garantit
    une complexité en O(1) amorti (Cormen chap. 17 section 4).
 */
-void vector_set(Vector* v, int id, void* value);
+void vector_set(Vector* v, int id, Generic value);
 
 #endif

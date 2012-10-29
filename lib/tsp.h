@@ -1,10 +1,12 @@
 #ifndef TSP_H_INCLUDED
 #define TSP_H_INCLEDED
 
+#include "graph.h"
+
 typedef struct {
   int id;
 
-  struct Nodes* next;
+  struct Town* next;
 } Town*;
 
 /* Algorithme TSP */

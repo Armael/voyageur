@@ -1,11 +1,13 @@
 #include "ftree.h"
 #include "vector.h"
+#include "generic.h"
+
 #include <stdlib.h>
 
 /* Retourne un Ftree composé d'un unique nœud, contenant la data
    passée en argument. Celui-ci n'a donc pas de voisins
    initialement */
-Ftree* ftree_create(void *data) {
+Ftree* ftree_create(Generic data) {
   Ftree *p = malloc(sizeof(Ftree));
   p->data = data;
   p->neighbors = vector_new();
@@ -20,8 +22,8 @@ Ftree* ftree_create(void *data) {
    arbre - pour libérer l'arbre entier il n'est nécessaire d'appeler
    la fonction de libération (ci-dessous) que sur l'un ou l'autre */
 void ftree_join(Ftree *tree1, Ftree *tree2) {
-  vector_set(tree1->neighbors, tree1->neighborsNb, tree2);
-  vector_set(tree2->neighbors, tree2->neighborsNb, tree1);
+  vector_set(tree1->neighbors, tree1->neighborsNb, (Generic)(void*)tree2);
+  vector_set(tree2->neighbors, tree2->neighborsNb, (Generic)(void*)tree1);
   tree1->neighborsNb++;
   tree2->neighborsNb++;
 }
@@ -35,8 +37,8 @@ void ftree_join(Ftree *tree1, Ftree *tree2) {
 void ftree_free_(Ftree *tree, Ftree *previous) {
   int i = 0;
   for(i = 0; i < tree->neighborsNb; i++) {
-    if(vector_get(tree->neighbors, i) != previous) {
-      ftree_free_(vector_get(tree->neighbors, i), tree);
+    if(vector_get(tree->neighbors, i).p != previous) {
+      ftree_free_(vector_get(tree->neighbors, i).p, tree);
     }
   }
   vector_free(tree->neighbors);
@@ -46,4 +48,3 @@ void ftree_free_(Ftree *tree, Ftree *previous) {
 void ftree_free(Ftree *tree) {
   ftree_free_(tree, NULL);
 }
-

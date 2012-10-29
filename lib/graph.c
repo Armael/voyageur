@@ -27,7 +27,7 @@ Graph* graph_new() {
  représente ici la liste simplement chainée vide) */
 int graph_addNode(Graph* g) {
   int newNodeId = g->nodesNb;
-  vector_set(g->nodes, newNodeId, NULL);
+  vector_set(g->nodes, newNodeId, (Generic)NULL);
   g->nodesNb++;
 
   return newNodeId;
@@ -55,11 +55,11 @@ void graph_addEdge(Graph* g, int n1, int n2, float weight) {
   if(n1 < g->nodesNb && n2 < g->nodesNb) {
     /* Il faut ajouter deux arêtes : n1->n2 et n2->n1 car le graphe
        n'est pas orienté */
-    Edge* e1 = edge_cons(vector_get(g->nodes, n1), n2, weight);
-    Edge* e2 = edge_cons(vector_get(g->nodes, n2), n1, weight);
+    Edge* e1 = edge_cons(vector_get(g->nodes, n1).p, n2, weight);
+    Edge* e2 = edge_cons(vector_get(g->nodes, n2).p, n1, weight);
 
-    vector_set(g->nodes, n1, e1);
-    vector_set(g->nodes, n2, e2);
+    vector_set(g->nodes, n1, (Generic)(void*)e1);
+    vector_set(g->nodes, n2, (Generic)(void*)e2);
   }
 }
 
@@ -69,7 +69,7 @@ void graph_free(Graph* g) {
   
   int i;
   for(i=0; i < g->nodesNb; i++) {
-    Edge* e = vector_get(g->nodes, i);
+    Edge* e = vector_get(g->nodes, i).p;
     while(e != NULL) {
       Edge* next = e->next;
       free(e);
@@ -94,7 +94,7 @@ void graph_toNeato(Graph* g, char* filename) {
 
   int i;
   for(i=0; i < g->nodesNb; i++) {
-    Edge* e = vector_get(g->nodes, i);
+    Edge* e = vector_get(g->nodes, i).p;
     while(e != NULL) {
       fprintf(f, "  %d -- %d [label=\"%f\"];\n", i, e->dest, e->weight);
       e = e->next;

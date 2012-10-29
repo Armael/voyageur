@@ -75,5 +75,3 @@ int trie_getCoord(Trie* t, char* name, float* x, float* y) {
     }
   }
 }
-
-

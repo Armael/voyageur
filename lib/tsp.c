@@ -1,3 +1,7 @@
+#include "vector.h"
+#include "ftree.h"
+#include "graph.h"
+
 #include <stdlib.h>
 
 Town* townListRev(Town* list) {
@@ -20,8 +24,8 @@ Town* prefixTravel_(Ftree* t, Ftree* parent, Town* path) {
   new_town->next = path;
   path = new_town;
   for(i = 0; i < t->neighborsNb; i++) {
-    if(vector_get(t->neighbors, i) != parent) {
-      path = prefixTravel(vector_get(tree->neighbors, i), t, path);
+    if(vector_get(t->neighbors, i).p != parent) {
+      path = prefixTravel(vector_get(tree->neighbors, i).p, t, path);
     }
   }
   return path;
