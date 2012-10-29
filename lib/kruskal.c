@@ -145,12 +145,13 @@ Ftree* kruskal(Graph* g) {
 
   /* Il n'y a au final qu'un arbre, et on ne veut pas le libérer
      puisqu'on le retourne */
+  Ftree* r_tree = vector_get(f->trees, 0).p;
   f->treesNb = 0;
   freeForest(f);
 
   freeKedgeList(ke);
   
-  return vector_get(f->trees, 0).p;
+  return r_tree;
 }
 
 /* Libère la mémoire occupée par une forêt. Il ne doit pas y avoir de
