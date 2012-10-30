@@ -64,7 +64,7 @@ Kedge* KedgeListFromGraph(Graph* g, Forest* f) {
 
 /* Coupe une liste d'arêtes de taille n en deux listes de taille
    n/2. Les listes de Kedges *part1 et *part2 passées en argument par
-   référence sont modifiése pour correspondre aux deux parties
+   référence sont modifiées pour correspondre aux deux parties
    obtenues.  Cette fonction n'alloue pas de mémoire : elle est
    destructive sur la liste passée en argument. Seules les deux
    parties sont utilisables après l'appel, la liste complète n'est
@@ -101,7 +101,7 @@ Kedge* merge(Kedge* part1, Kedge* part2) {
   }
 
   if(part1->weight < part2->weight) {
-    part1->next = merge(part1->next, part2); 
+   part1->next = merge(part1->next, part2); 
    return part1;
   } else {
     part2->next = merge(part1, part2->next);
@@ -128,7 +128,9 @@ Kedge* mergeSort(Kedge* list) {
 Ftree* kruskal(Graph* g) {
   Forest* f = initForestFromGraph(g);
   Kedge* ke = KedgeListFromGraph(g, f);
+
   ke = mergeSort(ke);
+
   int i;
   while(ke != NULL) {
     if(vector_get(f->trees, ke->n1).p != vector_get(f->trees, ke->n2).p) {
