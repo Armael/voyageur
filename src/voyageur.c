@@ -450,16 +450,16 @@ char* to_string(Word* w) {
 }
 
 Words* explore(Trie* t, Word* acc, Words* list) {
-  int i;
-  if(t == NULL || t->next == NULL) return list;
-  for(i=0; i < CHAR_NUMBER; i++) {
-    if(t->next[i] != NULL) {
-      Word* acc_ = cons((char)i, acc);
-      if(t->next[i]->is_word) {
+  if(t == NULL || t->letters == NULL) return list;
+  Letter* l;
+  for(l = t->letters; l != NULL; l = l->tail) {
+    if(l->next != NULL) {
+      Word* acc_ = cons(l->letter, acc);
+      if(l->next->is_word) {
 	list = cons_word(to_string(acc_), list);
       }
       
-      list = explore(t->next[i], acc_, list);
+      list = explore(l->next, acc_, list);
       free(acc_);
     }
   }
@@ -475,15 +475,18 @@ char* words_generator(const char* text, int state) {
     list = NULL;
     int i;
 
-    if(t == NULL || t->next == NULL)
+    if(t == NULL || t->letters == NULL)
       return NULL;
 
     for(i = 0; text[i] != '\0'; i++) {
-      if(t == NULL || t->next == NULL) {
+      if(t == NULL || t->letters == NULL) {
 	return NULL;
       } else {
 	acc = cons(text[i], acc);
-	t = t->next[(int)text[i]];
+	Letter* l = trie_getLetter(t, text[i]);
+	if(l == NULL) 
+	  return NULL;
+	t = l->next;
       }
     }
 

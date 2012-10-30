@@ -9,9 +9,37 @@ Trie* trie_new() {
   t->coord_x = 0;
   t->coord_y = 0;
   t->is_word = 0;
-  t->next = NULL;
+  t->letters = NULL;
 
   return t;
+}
+
+/* Ajoute une lettre pointant sur le trie next au lettres de t.
+
+   Attention : ne vérifie pas si la lettre n'est pas déja dans
+   t->letters. Pour ne pas perdre l'information précédemment insérée,
+   vous devez le vérifier vous-mêmes, avec trie_getLetter par
+   exemple */
+void trie_addLetter(Trie* t, char letter, Trie* next) {
+  Letter* new = malloc(sizeof(Letter));
+  new->letter = letter;
+  new->next = next;
+  new->tail = t->letters;
+
+  t->letters = new;
+}
+
+/* Retourne la structure Letter correspondant à letter parmi les
+   lettres de t.  Renvoie NULL si t ne comporte pas de lettre
+   letter */
+Letter* trie_getLetter(Trie* t, char letter) {
+  Letter* l;
+  for(l = t->letters; l != NULL; l = l->tail) {
+    if(l->letter == letter) {
+      return l;
+    }
+  }
+  return NULL;
 }
 
 /* Ajoute une ville à la trie, et insère ses coordonnées */
@@ -25,28 +53,26 @@ Trie* trie_addTown(Trie* t, char* name, float x, float y) {
     t->coord_x = x;
     t->coord_y = y;
   } else {
-    if(t->next == NULL) {
-      t->next = calloc(CHAR_NUMBER, sizeof(Trie));
+    char letter = name[0];
+    Letter* l = trie_getLetter(t, letter);
+    if(l == NULL) {
+      trie_addLetter(t, letter, trie_addTown(NULL, &name[1], x, y));
+    } else {
+      l->next = trie_addTown(l->next, &name[1], x, y);
     }
-
-    int letter = (int)(uint8_t)name[0];
-    t->next[letter] = trie_addTown(t->next[letter], &name[1], x, y);
   }
   return t;
 }
 
 /* Libère la mémoire occupée par une trie */
 void trie_free(Trie* t) {
-  int i;
   if(t != NULL) {
-    if(t->next != NULL) {
-      for(i=0; i < CHAR_NUMBER; i++) {
-	Trie* child;
-	if((child = t->next[i]) != NULL) {
-          trie_free(child);
-	}
-      }
-      free(t->next);
+    Letter* l = t->letters;
+    while(l != NULL) {
+      Letter* tmp = l->tail;
+      trie_free(l->next);
+      free(l);
+      l = tmp;
     }
   free(t);
   }
@@ -70,10 +96,12 @@ int trie_getCoord(Trie* t, char* name, float* x, float* y) {
       return -1;
     }
   } else {
-    if(t->next == NULL) {
-      return -1;
-    } else {
-      return trie_getCoord(t->next[(int)name[0]], &name[1], x, y);
+    Letter* l;
+    for(l = t->letters; l != NULL; l = l->tail) {
+      if(l->letter == name[0]) {
+	return trie_getCoord(l->next, &name[1], x, y);
+      }
     }
+    return -1;
   }
 }
