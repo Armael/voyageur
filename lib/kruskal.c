@@ -131,6 +131,7 @@ Ftree* kruskal(Graph* g) {
   Kedge* ke = KedgeListFromGraph(g, f);
 
   ke = mergeSort(ke);
+  Kedge* start = ke;
 
   int i;
   while(ke != NULL) {
@@ -152,7 +153,7 @@ Ftree* kruskal(Graph* g) {
   f->treesNb = 0;
   freeForest(f);
 
-  freeKedgeList(ke);
+  freeKedgeList(start);
   
   return r_tree;
 }
