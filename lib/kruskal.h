@@ -62,4 +62,6 @@ void freeForest(Forest* f);
 /* Libère la mémoire occupée par une liste de Kedges */
 void freeKedgeList(Kedge* list);
 
+void printKedgeList(Kedge* list);
+
 #endif

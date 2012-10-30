@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "vector.h"
 #include "graph.h"
@@ -179,4 +180,13 @@ void freeKedgeList(Kedge* list) {
     free(list);
     list = e;
   }
+}
+
+void printKedgeList(Kedge* list) {
+  while(list != NULL) {
+    printf("((%d,%p) %f -> (%d,%p)), ", list->n1, list->addr1,
+	   list->weight, list->n2, list->addr2);
+    list = list->next;
+  }
+  printf("\n");
 }
