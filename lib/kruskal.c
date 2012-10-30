@@ -112,7 +112,7 @@ Kedge* merge(Kedge* part1, Kedge* part2) {
 
 /* Tri fusion, complexité O(n log(n)) */
 Kedge* mergeSort(Kedge* list) {
-  if(list == NULL) {
+  if(list == NULL || list->next == NULL) {
     return list;
   } else {
     Kedge *part1, *part2;
