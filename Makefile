@@ -1,5 +1,5 @@
 SRC := voyageur.c
-LIBS := vector.c graph.c
+LIBS := vector.c graph.c trie.c ftree.c kruskal.c tsp.c
 
 SRC := $(patsubst %,src/%,$(SRC))
 LIBS := $(patsubst %,lib/%,$(LIBS))
@@ -19,13 +19,14 @@ DEP_TEST := ${OBJ_TEST:.o=.dep}
 CC := gcc
 CFLAGS := -Wall -Wextra -Wunused -Wconversion -Wno-sign-conversion
 CFLAGS += -Ilib -Itests
+CFLAGS += -g -O0
 
 .PHONY: all build-tests tests clean mproper
 
 all: voyageur
 
 voyageur: $(OBJ)
-	$(CC) $(CFLAGS) -lm -o $@ $(OBJ)
+	$(CC) $(CFLAGS) -lm -lreadline -o $@ $(OBJ)
 
 build-tests: $(BIN_TEST)
 
