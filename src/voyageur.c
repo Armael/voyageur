@@ -15,6 +15,9 @@
 #include "trie.h"
 #include "tsp.h"
 
+#include "utils.h"
+#include "parsers.h"
+
 char* commands[] = {
   "load_edgelist",
   "load_coordinates",
@@ -91,95 +94,6 @@ void resetGraph() {
   townsY = vector_new();
 }
 
-
-float dist(float x1, float y1, float x2, float y2) {
-  return sqrtf(fabsf(x2 - x1) + fabsf(y2 - y1));
-}
-
-Graph* parse_EdgesDistances(FILE* f) {
-  if(f != NULL) {
-    rewind(f);
-    int nodes_nb;
-    fscanf(f, "%d!\n", &nodes_nb);
-    
-    Graph* g = graph_newWithNodes(nodes_nb+1);
-
-    int n1, n2;
-    float w;
-    int ret;
-    while((ret = fscanf(f, "%d %d: %f!\n", &n1, &n2, &w)) && (ret != EOF)) {
-      graph_addEdge(g, n1, n2, w);
-    }
-
-    return g;
-  }
-  return NULL;
-}
-
-Graph* parse_VerticesCoordinates(FILE* f) {
-  if(f != NULL) {
-    rewind(f);
-    int nodes_nb;
-    fscanf(f, "%d!\n", &nodes_nb);
-    
-    Graph* g = graph_newWithNodes(nodes_nb+1);
-    Vector* v = vector_newWithSize(nodes_nb+1);
-    vector_fill(v, nodes_nb+1, (Generic)NULL);
-
-    int i;
-    size_t n;
-    char* pos;
-    int ret;
-    while((ret = fscanf(f, "%d: ", &i)) && (ret != EOF)) {
-      getline(&pos, &n, f);
-      vector_set(v, i, (Generic)(void*)pos);
-    }
-
-    int j;
-    for(i=0; i < nodes_nb+1; i++) {
-      for(j=0; j < nodes_nb+1; j++) {
-	if(i != j) { /* On ajoute pas d'arête de i vers lui-même */
-	  float x1, y1, x2, y2;
-	  sscanf(vector_get(v, i).p, "%f; %f!", &x1, &y1);
-	  sscanf(vector_get(v, j).p, "%f; %f!", &x2, &y2);
-	  graph_addEdge(g, i, j, dist(x1, x2, y1, y2));
-	}
-      }
-    }
-
-    for(i=0; i < nodes_nb+1; i++)
-      free(vector_get(v, i).p);
-
-    vector_free(v);
-
-    return g;	
-  }
-  return NULL;
-}
-
-Trie* parse_Towns(FILE* f) {
-  Trie* my_towns = trie_new();
-
-  if(f != NULL) {
-    rewind(f);
-
-    char* line = NULL;
-    size_t n;
-    while(getline(&line, &n, f) != -1) {
-      strtok(line, ":");
-      char* split = strtok(NULL, ":");
-      split[-1] = '\0'; /* Élimination du ':' */
-      
-      float x, y;
-      sscanf(split, " %f; %f!", &x, &y);
-      my_towns = trie_addTown(my_towns, line, x, y);
-    }
-    free(line);
-  }
-
-  return my_towns;
-}
-
 /* Commandes :
 - load_edgelist
 - load_coordinates
@@ -209,45 +123,19 @@ int main() {
 
     line = readline(prompt);
     
-    if(!line)
-      break;
-    
-    s = stripwhite(line);
+    if(line) {
+      s = stripwhite(line);
 
-    if(s[0] != '\0') {
-      add_history(s);
-      execute_line(s);
+      if(s[0] != '\0') {
+	add_history(s);
+	execute_line(s);
+      }
+      
+      free(line);
     }
-
-    free(line);
   }
 
   return 0;
-}
-
-int is_white(char c) {
-  return c == ' ' ||
-    c == '\n' ||
-    c == '\t';
-}
-
-char* stripwhite(char* str) {
-  int i = 0;
-  int j = (int)strlen(str) - 1;
-
-  while(is_white(str[j])) j--;
-  str[j+1] = '\0';
-
-  while(is_white(str[i])) i++;
-
-  return &str[i];
-}
-
-char* swhite_atBegin(char* str) {
-  int i = 0;
-  while(is_white(str[i])) i++;
-
-  return &str[i];
 }
 
 void execute_line(char* line) {
@@ -271,6 +159,7 @@ void execute_line(char* line) {
   while(line[l] != '\0' && !is_white(line[l])) l++;
 
   /* Comparaisons pour trouver de quelle commande il s'agit */
+
   /* load_db : Commande de chargement de la base de données.
      Prend un argument : le nom du fichier contenant les villes */
   if(!strncmp(&line[i], "load_db", j-i-1)) {
@@ -292,6 +181,7 @@ containing the database of towns with their coordinates\n");
 	fclose(towns_db_f);
       }
     }
+
   } else if(!strncmp(&line[i], "add", j-i-1)) {
     /* Premier argument : ville à ajouter au graphe */
     if(l-k == 0) {
@@ -319,6 +209,7 @@ the database to add\n");
         townsNb++;
       }
     }
+
   } else if(!strncmp(&line[i], "list", j-i-1)) {
     /* Ne prend aucun argument */
     int u;
@@ -326,6 +217,7 @@ the database to add\n");
       printf("%s (%f, %f)\n", (char*)vector_get(townsNames, u).p, 
 	     vector_get(townsX, u).f, vector_get(townsY, u).f);
     }
+
   } else if(!strncmp(&line[i], "solve", j-i-1)) {
     /* Prend comme argument le fichier dans lequel écrire la
        tournée. Si aucun fichier n'est passé en argument, écrit sur la
@@ -356,12 +248,14 @@ the database to add\n");
   } else if(!strncmp(&line[i], "reset", j-i-1)) {
     /* Ne prend aucun argument */
     resetGraph();
+
   } else if(!strncmp(&line[i], "quit", j-i-1)) {
     /* Ne prend aucun argument */
     freeGraph();
     trie_free(towns);
 
     done = 1;
+
   } else if(!strncmp(&line[i], "help", j-i-1)) {
     /* Prend une commande en argument */
     if(l-k == 0) {
@@ -378,6 +272,7 @@ command to display informations\n");
 	}
       }
     }
+
   } else if(!strncmp(&line[i], "get", j-i-1)) {
     float x, y;
     char* s = stripwhite(&line[j]);
@@ -387,6 +282,7 @@ command to display informations\n");
     } else {
       printf("Erreur : ce mot n'est pas dans la base de données\n");
     }
+
   } else if(!strncmp(&line[i], "set", j-i-1)) {
     float x, y;
     char w[200];
