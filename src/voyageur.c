@@ -18,6 +18,11 @@
 #include "utils.h"
 #include "parsers.h"
 
+/* Informations sur les commandes disponibles (utilisé par
+ * l'autocomplétion et l'aide sur les commandes)
+ */
+
+/* Noms des différentes commandes utilisables */
 char* commands[] = {
   "load_edgelist",
   "load_coordinates",
@@ -31,6 +36,8 @@ char* commands[] = {
   NULL
 };
 
+/* Chaîne d'aide décrivant l'utilisation de la commande située au même
+   indice dans le tableau commands[] */
 char* commands_help[] = {
   "Loads a file describing the list of edges between \
 towns (1st and simpler file format). Directly fills \
@@ -54,21 +61,38 @@ case, the path will be writen in it.",
   NULL
 };
 
+/* Variables utilisées et modifiées par les différentes fonction du
+ * fichier (notamment la fonction d'exécution des comandes)
+ */
+
+/* Quand est à 1, indique que l'on doit sortir de la boucle
+   d'évaluation de commandes */
 static int done = 0;
+/* La base de données contenant des noms de villes, associés à leurs
+   coordonnées */
 static Trie* towns = NULL;
 
+/* Le graphe des villes sélectionnées, sur lesquelles on appliquera
+   l'algorithme de résolution du problème du voyageur du commerce */
 static Graph* graph = NULL;
 
+/* Un tableau, indicé par les nœuds du graphe, et qui à chacun associe
+   le nom de la ville correspondante */
 static Vector* townsNames = NULL;
+/* La même chose, mais associe la coordonnée X de la ville */
 static Vector* townsX = NULL;
+/* La même chose, mais associe la coordonnée Y de la ville */ 
 static Vector* townsY = NULL;
 
+/* Nombre de villes dans le graphe (égal au nombre de nœuds) */
 static int townsNb = 0;
 
-int is_white(char c);
-char* stripwhite(char* str);
-char* swhite_atBegin(char* str);
+/* Fonctions écrites après le main de ce même fichier
+ */
+/* Exécute une ligne entrée par l'utilisateur, comportant une commande
+   et d'éventuels arguments */
 void execute_line(char* line);
+/* Initialise la bibliothèque readline pour l'autocomplétion */
 void initialize_readline();
 
 void freeGraph() {
@@ -83,6 +107,8 @@ void freeGraph() {
   vector_free(townsY);
 }
 
+/* Réinitialise le graphe, libère la mémoire et le prépare à un nouvel
+   usage */
 void resetGraph() {
   freeGraph();
 
@@ -93,18 +119,6 @@ void resetGraph() {
   townsX = vector_new();
   townsY = vector_new();
 }
-
-/* Commandes :
-- load_edgelist
-- load_coordinates
-- load_db
-- add
-- list
-- solve
-- reset
-- quit
-- help
-*/
 
 int main() {
   char *s, *line;
@@ -138,6 +152,8 @@ int main() {
   return 0;
 }
 
+/* Prend une ligne, entrée par l'utilisateur, se composant d'une
+   commande et de ses éventuels arguments, et l'exécute */
 void execute_line(char* line) {
   /* Élimination des potentiels caractères blancs en début de ligne.
    i : début de la commande */
@@ -182,6 +198,8 @@ containing the database of towns with their coordinates\n");
       }
     }
 
+    /* Ajoute une ville de la BDD au graphe, le nom étant passé en
+       argument */
   } else if(!strncmp(&line[i], "add", j-i-1)) {
     /* Premier argument : ville à ajouter au graphe */
     if(l-k == 0) {
@@ -210,6 +228,8 @@ the database to add\n");
       }
     }
 
+    /* Liste les noms et coordonnées des villes actuellement ajoutées
+       au graphe */
   } else if(!strncmp(&line[i], "list", j-i-1)) {
     /* Ne prend aucun argument */
     int u;
@@ -218,6 +238,9 @@ the database to add\n");
 	     vector_get(townsX, u).f, vector_get(townsY, u).f);
     }
 
+    /* Applique l'algorithme tsp() sur les villes actuellement dans le
+       graphei. Si un nom de fichier est passé en argument, écrit la
+       tournée dans ce fichier, sinon l'affiche simplement */
   } else if(!strncmp(&line[i], "solve", j-i-1)) {
     /* Prend comme argument le fichier dans lequel écrire la
        tournée. Si aucun fichier n'est passé en argument, écrit sur la
@@ -235,6 +258,7 @@ the database to add\n");
 
     Town* path = tsp(graph);
     
+    /* Itération sur la tournée et affichage des villes */
     Town* a_town;
     for(a_town = path; a_town != NULL; a_town = a_town->next) {
       fprintf(fout, "%s\n", (char*)vector_get(townsNames, a_town->id).p);
@@ -245,17 +269,21 @@ the database to add\n");
     if(l-k > 0)
       fclose(fout);
 
+    /* Réinitialise le graphe */
   } else if(!strncmp(&line[i], "reset", j-i-1)) {
     /* Ne prend aucun argument */
     resetGraph();
 
+    /* Quitte le programme */
   } else if(!strncmp(&line[i], "quit", j-i-1)) {
     /* Ne prend aucun argument */
     freeGraph();
     trie_free(towns);
 
+    /* Indique que l'on sort de la boucle REPL */
     done = 1;
 
+    /* Affiche de l'aide sur une commande */
   } else if(!strncmp(&line[i], "help", j-i-1)) {
     /* Prend une commande en argument */
     if(l-k == 0) {
@@ -273,6 +301,9 @@ command to display informations\n");
       }
     }
 
+    /*** Code mort ***/
+    /* Anciennent utilisé à des fins de debug, set et get permettent
+       très basiquement de lire/écrire dans la BDD */
   } else if(!strncmp(&line[i], "get", j-i-1)) {
     float x, y;
     char* s = stripwhite(&line[j]);
@@ -304,12 +335,16 @@ command to display informations\n");
  * Readline completion
  */
 
+/* Structure décrivant un mot comme liste chainée de lettres. Dans la
+suite, sera en fait utilisé pour représenter le miroir du mot
+réellement voulu, les lettres étant empilées */
 typedef struct word Word;
 struct word {
   char letter;
   Word* tail;
 };
 
+/* Ajoute une lettre en tête de mot */
 Word* cons(char letter, Word* w) {
   Word* l = malloc(sizeof(Word));
   l->letter = letter;
@@ -317,12 +352,16 @@ Word* cons(char letter, Word* w) {
   return l;
 }
 
+/* Structure décrivant une liste de mots (un mot étant un
+   char*). Utilisée par la suite par la fonction retournant l'ensemble
+   des mots d'un trie */
 typedef struct words Words;
 struct words {
   char* word;
   Words* tail;
 };
 
+/* Ajoute un mot en tête de liste */
 Words* cons_word(char* word, Words* list) {
   Words* w = malloc(sizeof(Words));
   w->word = word;
@@ -330,9 +369,14 @@ Words* cons_word(char* word, Words* list) {
   return w;
 }
 
+/* Convertit un mot sous forme de la liste des lettres *en partant de
+   la fin* (le mot représenté est en fait le miroir) en une chaine de
+   caractères (qui devra être libérée - en fait elle le sera par la
+   bibliothèque readline pour l'utilisation qui en est faite) */
 char* to_string(Word* w) {
   int i;
   Word* w_;
+  /* Premier parcours de la liste pour trouver la longueur du mot */
   for(i = 0, w_ = w; w_ != NULL; w_ = w_->tail, i++);
 
   char* s = malloc((i+1)*sizeof(char));
@@ -345,6 +389,11 @@ char* to_string(Word* w) {
   return s;
 }
 
+/* Retourne la liste des mots contenus dans un trie. Ceci est en fait
+   vrai pour acc == NULL et list == NULL, la fonction étant récursive
+   et se servant d'accumulateurs (acc et list).  list est
+   l'accumulateur des mots déja trouvés, et acc l'accumulateur des
+   lettres au début du mot en cours */ 
 Words* explore(Trie* t, Word* acc, Words* list) {
   if(t == NULL || t->letters == NULL) return list;
   Letter* l;
@@ -362,7 +411,19 @@ Words* explore(Trie* t, Word* acc, Words* list) {
   return list;
 }
 
+/* Fonction utilisée directement par la bibliothèque readline. Elle
+   est utilisée pour récupérer les différentes possibilités de
+   completion *pour les mots du trie*. Le mot à compléter est
+   text. Lorsque la fonction est appellée pour la première fois, state
+   == 0. Elle calcule alors les différentes colpmétions possibles
+   grâce à explore(). words_generator() est ensuite appellée plusieurs
+   fois, et doit retourner à chaque appel une nouvelle possibilité de
+   completion (qu'elle pioche parmi celles précalculées). Quand il n'y
+   en a plus, elle retourne NULL. Les complétions sont libérées par la
+   bibliothèque readline */
 char* words_generator(const char* text, int state) {
+  /* Grâce au mot clef static, la valeur de list est conservée d'un
+     appel sur l'autre */
   static Words* list;
 
   if(state == 0) {
@@ -374,6 +435,10 @@ char* words_generator(const char* text, int state) {
     if(t == NULL || t->letters == NULL)
       return NULL;
 
+    /* Calcul de l'accumulateur initial acc, correspondant aux lettres
+       du préfixe que l'on nous a donné (text). On parcourt donc le
+       trie, jusqu'à obtenir le sous-trie qu'il faudra explorer pour
+       connaître les possibilités de completion */
     for(i = 0; text[i] != '\0'; i++) {
       if(t == NULL || t->letters == NULL) {
 	return NULL;
@@ -398,6 +463,8 @@ char* words_generator(const char* text, int state) {
     }
   }
 
+  /* À chaque appel, on retourne une nouvelle possibilité de
+     completion en avançant dans list */
   while(list != NULL) {
     char* w = list->word;
     Words* tail = list->tail;
@@ -410,6 +477,10 @@ char* words_generator(const char* text, int state) {
   return NULL;
 }
 
+/* Fonction similaire à words_generator(), celle-ci génère les
+   possibilités de completion pour les *commandes*. Il suffit d'itérer
+   sur les noms de commandes (commands[]) et de regarder les commandes
+   commençant par text */
 char* commands_generator(const char* text, int state) {
   static int list_index;
   static size_t len;
@@ -424,6 +495,10 @@ char* commands_generator(const char* text, int state) {
     list_index++;
     
     if(strncmp(name, text, len) == 0) {
+      /* On strdup() le nom, car readline essaye de libérer la mémoire
+	 des chaines qu'on lui passe, ce qui échouerait si on lui
+	 passait uniquement name, qui est une chaine statique (section
+	 ROData du binaire) */
       return(strdup(name));
     }
   }
@@ -431,15 +506,27 @@ char* commands_generator(const char* text, int state) {
   return NULL;
 }
 
+/* Fonction également utilisée directement par readline. Étant donné
+   une chaîne à compléter, completion() doit retourner les différentes
+   possibilités. Il s'agit en fait de vérifier la nature de la
+   complétion (sur une commande/sur un mot du trie) et de se servir
+   des *_generator() correspondants. Si l'on renvoie NULL, alors
+   readline fera de l'autocomplétion sur les noms de fichiers (utilisé
+   pour les commandes load_*).
+   start et end indiquent la position de text (le motif à compléter)
+   dans la ligne de commande globale (contenue dans rl_line_buffer) */
 char** completion(const char* text, int start, int end) {
   char** matches = NULL;
   
   if(start == 0) {
+    /* On complète au début sur les commandes */
     matches = rl_completion_matches(text, commands_generator);
   } else {
     if(!strncmp(swhite_atBegin(rl_line_buffer), "add", 3)) {
+      /* add ajoute un mot du trie */
       matches = rl_completion_matches(text, words_generator);
     } else if(!strncmp(swhite_atBegin(rl_line_buffer), "help", 4)) {
+      /* help prend une commande en argument */
       matches = rl_completion_matches(text, commands_generator);
     }
   }
@@ -447,6 +534,7 @@ char** completion(const char* text, int start, int end) {
   return matches;
 }
 
+/* Renseigne la fonction pour la complétion à utiliser */
 void initialize_readline() {
   rl_attempted_completion_function = (rl_completion_func_t *)completion;
 }
