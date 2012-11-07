@@ -80,7 +80,7 @@ from the DB\n");
   if((f = fopen(filename, "r")) == NULL) {
     printf("Error : unable to open file \"%s\" for reading\n", filename);
   } else {
-    char* s;
+    char* s = NULL;
     size_t n;
     while(getline(&s, &n, f) != -1) {
       char* add_args[] = { "add", stripwhite(s), NULL };
