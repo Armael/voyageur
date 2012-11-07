@@ -4,7 +4,7 @@
 #include "generic.h"
 
 typedef struct Vector {
-  Generic* content; 
+  Generic* content; /* Generic array */
   int size;
 } Vector;
 
