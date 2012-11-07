@@ -95,19 +95,37 @@ void split(Kedge* list, Kedge** part1, Kedge** part2) {
    processus est destructif : tenter d'accéder à *part1 ou *part2
    après l'appel à la fonction n'a pas de sens */
 Kedge* merge(Kedge* part1, Kedge* part2) {
-  if(part1 == NULL) {
-    return part2;
-  } else if(part2 == NULL) {
-    return part1;
+  Kedge* p1 = part1;
+  Kedge* p2 = part2;
+  Kedge* m = NULL;
+  Kedge* t = NULL;
+
+  while(!(p1 == NULL && p2 == NULL)) {
+    Kedge* to_add;
+    if(p1 == NULL) {
+      to_add = p2;
+      p2 = NULL;
+    } else if(p2 == NULL) {
+      to_add = p1;
+      p1 = NULL;
+    } else if(p1->weight < p2->weight) {
+      to_add = p1;
+      p1 = p1->next;
+    } else if(p1->weight >= p2->weight) {
+      to_add = p2;
+      p2 = p2->next;
+    }
+
+    if(m == NULL) {
+      m = to_add;
+      t = m;
+    } else {
+      t->next = to_add;
+      t = to_add;
+    }
   }
 
-  if(part1->weight < part2->weight) {
-   part1->next = merge(part1->next, part2); 
-   return part1;
-  } else {
-    part2->next = merge(part1, part2->next);
-    return part2;
-  }
+  return m;
 }
 
 /* Tri fusion, complexité O(n log(n)) */

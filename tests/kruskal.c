@@ -87,6 +87,70 @@ START_TEST(split) {
 }
 END_TEST
   
+START_TEST(merge_null) {
+  Kedge* a = NULL;
+  Kedge* b = NULL;
+
+  mu_assert(merge(a, b) == NULL,
+	    "La fusion de deux NULL doit donner NULL");
+}
+END_TEST
+
+START_TEST(merge_one) {
+  Kedge* b = kedge_weights(1, 42);
+  Kedge* l = kedge_weights(1, 42);
+
+  Kedge* m = merge(NULL, b);
+
+  mu_assert(kedge_list_equal(m, l),
+	    "Mauvaise fusion d'un élément avec une liste vide");
+
+  freeKedgeList(m);
+  freeKedgeList(l);
+}
+END_TEST
+
+START_TEST(merge_some) {
+  Kedge* a = kedge_weights(3, 1,2,3);
+  Kedge* l = kedge_weights(3, 1,2,3);
+
+  Kedge* m = merge(NULL, a);
+
+  mu_assert(kedge_list_equal(m, l),
+	    "Mauvaise fusion d'une liste avec la liste vide");
+
+  freeKedgeList(m);
+  freeKedgeList(l);
+}
+END_TEST
+  
+START_TEST(merge_null_one) {
+  Kedge* b = kedge_weights(1, 42);
+  Kedge* l = kedge_weights(1, 42);
+
+  Kedge* m = merge(b, NULL);
+
+  mu_assert(kedge_list_equal(m, l),
+	    "Mauvaise fusion de la liste vide avec un élément");
+
+  freeKedgeList(m);
+  freeKedgeList(l);
+}
+END_TEST
+
+START_TEST(merge_null_some) {
+  Kedge* a = kedge_weights(3, 1,2,3);
+  Kedge* l = kedge_weights(3, 1,2,3);
+
+  Kedge* m = merge(a, NULL);
+
+  mu_assert(kedge_list_equal(m, l),
+	    "Mauvaise fusion de la liste vide avec une liste");
+
+  freeKedgeList(m);
+  freeKedgeList(l);
+}
+END_TEST
 
 START_TEST(merge) {
   Kedge *s1, *s2;
@@ -100,7 +164,7 @@ START_TEST(merge) {
   f = merge(s1, s2);
 
   mu_assert(kedge_list_equal(f, l),
-  	    "Mauvaise fusion");
+  	    "Mauvaise fusion de deux listes triées");
   
   freeKedgeList(l);
   freeKedgeList(f);
@@ -133,6 +197,11 @@ int main() {
 
   mu_run_test(list_gen);
   mu_run_test(split);
+  mu_run_test(merge_null);
+  mu_run_test(merge_one);
+  mu_run_test(merge_some);
+  mu_run_test(merge_null_one);
+  mu_run_test(merge_null_some);
   mu_run_test(merge);
 
   mu_run_test(mergeSort);
