@@ -1,4 +1,4 @@
-SRC := voyageur.c parsers.c utils.c
+SRC := voyageur.c parsers.c utils.c commands.c
 LIBS := vector.c graph.c trie.c ftree.c kruskal.c tsp.c
 
 SRC := $(patsubst %,src/%,$(SRC))

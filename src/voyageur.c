@@ -16,76 +16,83 @@
 #include "tsp.h"
 
 #include "utils.h"
+#include "colors.h"
 #include "parsers.h"
+#include "voyageur.h"
+#include "commands.h"
+
+#define MESSAGE "\
+         Welcome to the TSP Solver\n\
+                   v 0.1          \n\
+  2012 - Armaël Guéneau & Valentin Gledel \n\
+\n\
+ You can type '%shelp%s' to have a list of commands,\n\
+ and '%shelp <command>%s' for more exhaustive informations\n\n", \
+    ANSI_BLUE, ANSI_NORMAL, ANSI_BLUE, ANSI_NORMAL
 
 /* Informations sur les commandes disponibles (utilisé par
  * l'autocomplétion et l'aide sur les commandes)
  */
 
-/* Noms des différentes commandes utilisables */
-char* commands[] = {
-  "load_edgelist",
-  "load_coordinates",
-  "load_db",
-  "add",
-  "list",
-  "solve",
-  "reset",
-  "quit",
-  "help",
-  NULL
-};
-
-/* Chaîne d'aide décrivant l'utilisation de la commande située au même
-   indice dans le tableau commands[] */
-char* commands_help[] = {
-  "Loads a file describing the list of edges between \
-towns (1st and simpler file format). Directly fills \
+static Env env = { 0, NULL, NULL, NULL, NULL, NULL, 0,
+		   {
+		     { "load_edgelist",
+		       "Loads a file containing a list of edges",
+		       "Loads a file describing the list of edges between \
+towns (1st and simpler file format). Directly fills			\
 the graph, without using the database.",
-  "Loads a file describing the list of towns coordinates \
-(2nd file format). Directly fills the graph, without \
+		       load_edgelist },
+		     { "load_coordinates",
+		       "Loads a file containing towns coordinates",
+		       "Loads a file describing the list of towns coordinates \
+(2nd file format). Directly fills the graph, without			\
 using the database.",
-  "Loads a file describing the named towns with their \
-coordinates (3rd file format), and fills the database. \
-The graph remains empty, towns had to be added with the \
+		       load_coordinates },
+		     { "load_db",
+		       "Loads a file containing towns names & coordinates. Fills the DB",
+		       "Loads a file describing the named towns with their \
+coordinates (3rd file format), and fills the database.			\
+The graph remains empty, towns had to be added with the			\
 command \"add\".",
-  "Given it's name, adds a town from the database to \
+		       load_db },
+		     { "add",
+		       "Adds a town from the DB",
+		       "Given it's name, adds a town from the database to \
 the graph, to be used by the algorithm.",
-  "Lists the towns currently added to the graph",
-  "Solves the business traveler's problem for the towns \
-currently in the graph. A filename can be passed, in this \
+		       add },
+		     { "add_from_file",
+		       "Adds the towns listed in a file from the DB",
+		       "Calls add for each town name listed in the file \
+given in argument\n",
+		       add_from_file },
+		     { "list",
+		       "List the currently added towns",
+		       "Lists the towns currently added to the graph",
+		       list },
+		     { "solve",
+		       "Solves the salesman's problem. Can output the result in a file",
+		       "Solves the business traveler's problem for the towns \
+currently in the graph. A filename can be passed, in this		\
 case, the path will be writen in it.",
-  "Removes all towns in the graph.",
-  "Quits the program.",
-  "Given a command name, displays some help about it.",
-  NULL
+		       solve },
+		     { "reset",
+		       "Removes all towns in the graph",
+		       "Removes all towns in the graph.",
+		       reset },
+		     { "help",
+		       "Displays help about commands",
+		       "Given a command name, displays some help about it. If no command is given, display short description of all commands.",
+		       help },
+		     { "quit",
+		       "Quits the program",
+		       "Quits the program.",
+		       quit },
+		     { NULL,
+		       NULL,
+		       NULL,
+		       NULL }
+		   }
 };
-
-/* Variables utilisées et modifiées par les différentes fonction du
- * fichier (notamment la fonction d'exécution des comandes)
- */
-
-/* Quand est à 1, indique que l'on doit sortir de la boucle
-   d'évaluation de commandes */
-static int done = 0;
-/* La base de données contenant des noms de villes, associés à leurs
-   coordonnées */
-static Trie* towns = NULL;
-
-/* Le graphe des villes sélectionnées, sur lesquelles on appliquera
-   l'algorithme de résolution du problème du voyageur du commerce */
-static Graph* graph = NULL;
-
-/* Un tableau, indicé par les nœuds du graphe, et qui à chacun associe
-   le nom de la ville correspondante */
-static Vector* townsNames = NULL;
-/* La même chose, mais associe la coordonnée X de la ville */
-static Vector* townsX = NULL;
-/* La même chose, mais associe la coordonnée Y de la ville */ 
-static Vector* townsY = NULL;
-
-/* Nombre de villes dans le graphe (égal au nombre de nœuds) */
-static int townsNb = 0;
 
 /* Fonctions écrites après le main de ce même fichier
  */
@@ -95,44 +102,47 @@ void execute_line(char* line);
 /* Initialise la bibliothèque readline pour l'autocomplétion */
 void initialize_readline();
 
-void freeGraph() {
-  graph_free(graph);
+void freeGraph(Env* env) {
+  graph_free(env->graph);
 
   int u;
-  for(u = 0; u < townsNb; u++) {
-    free(vector_get(townsNames, u).p);
+  for(u = 0; u < env->townsNb; u++) {
+    free(vector_get(env->townsNames, u).p);
   }
-  vector_free(townsNames);
-  vector_free(townsX);
-  vector_free(townsY);
+  vector_free(env->townsNames);
+  vector_free(env->townsX);
+  vector_free(env->townsY);
 }
 
 /* Réinitialise le graphe, libère la mémoire et le prépare à un nouvel
    usage */
-void resetGraph() {
-  freeGraph();
+void resetGraph(Env* env) {
+  freeGraph(env);
 
-  townsNb = 0;
+  env->townsNb = 0;
 
-  graph = graph_new();
-  townsNames = vector_new();
-  townsX = vector_new();
-  townsY = vector_new();
+  env->graph = graph_new();
+  env->townsNames = vector_new();
+  env->townsX = vector_new();
+  env->townsY = vector_new();
 }
 
 int main() {
   char *s, *line;
 
-  resetGraph();
+  printf(MESSAGE);
+
+  resetGraph(&env);
 
   initialize_readline();
 
-  while(done == 0) {
-    char prompt[20];
-    if(townsNb) {
-      snprintf(prompt, 20, "(%d towns) > ", townsNb);
+  while(env.done == 0) {
+    char prompt[40];
+    if(env.townsNb) {
+      snprintf(prompt, 40, "(%d towns) %s>%s ", env.townsNb,
+	       ANSI_GREEN, ANSI_NORMAL);
     } else {
-      snprintf(prompt, 20, "> ");
+      snprintf(prompt, 40, "%s>%s ", ANSI_GREEN, ANSI_NORMAL);
     }
 
     line = readline(prompt);
@@ -155,180 +165,49 @@ int main() {
 /* Prend une ligne, entrée par l'utilisateur, se composant d'une
    commande et de ses éventuels arguments, et l'exécute */
 void execute_line(char* line) {
-  /* Élimination des potentiels caractères blancs en début de ligne.
-   i : début de la commande */
-  int i = 0;
-  while(line[i] != '\0' && is_white(line[i])) i++;
+  line = stripwhite(line);
+
+  char** args;
+  int args_nb = 0;
+  unsigned int i, toggle;
+  size_t len = strlen(line);
+  for(i=0, toggle=0; line[i] != '\0'; i++) {
+    if(is_white(line[i])) {
+      if(toggle) toggle = 0;
+      line[i] = '\0';
+    } else {
+      if(!toggle) toggle = 1;
+      args_nb++;
+    }
+  }
   
-  /* On cherche la fin de la commande (qui n'est composée que de
-     caractères non blancs.
-  j : premier blanc après la commande */
-  int j = i;
-  while(line[j] != '\0' && !is_white(line[j])) j++;
+  args = malloc((args_nb+1) * sizeof(char*));
   
-  /* k : Début du premier argument */
-  int k = j;
-  while(line[k] != '\0' && is_white(line[k])) k++;
-  
-  /* l : Premier blanc après le premier argument */
-  int l = k;
-  while(line[l] != '\0' && !is_white(line[l])) l++;
+  int a = 0;
+  for(i=0, toggle=0; i < len; i++) {
+    if(line[i] == '\0') {
+      if(toggle) toggle = 0;
+    } else {
+      if(!toggle) {
+	toggle = 1;
+	args[a++] = &line[i];
+      }
+    }
+  }
+  args[a] = NULL;
 
   /* Comparaisons pour trouver de quelle commande il s'agit */
 
-  /* load_db : Commande de chargement de la base de données.
-     Prend un argument : le nom du fichier contenant les villes */
-  if(!strncmp(&line[i], "load_db", j-i-1)) {
-    /* Premier argument : fichier contenant la base */
-    if(l-k == 0) {
-      printf("Usage : \"load_db <filename>\" where <filename> is the file \
-containing the database of towns with their coordinates\n");
-    } else {
-      line[l] = '\0';
-      char* filename = &line[k];
-      FILE* towns_db_f;
-      if((towns_db_f = fopen(filename, "r")) == NULL) {
-	printf("Error: Unable to open %s\n", filename);
-      } else {
-	if(towns != NULL) {
-	  trie_free(towns);
-	}
-	towns = parse_Towns(towns_db_f);
-	fclose(towns_db_f);
-      }
-    }
-
-    /* Ajoute une ville de la BDD au graphe, le nom étant passé en
-       argument */
-  } else if(!strncmp(&line[i], "add", j-i-1)) {
-    /* Premier argument : ville à ajouter au graphe */
-    if(l-k == 0) {
-      printf("Usage : \"add <town name>\" where <town name> is a town in \
-the database to add\n");
-    } else {
-      float x, y;
-      line[l] = '\0';
-      char* town_name = &line[k];
-      if(trie_getCoord(towns, town_name, &x, &y) != 0) {
-	printf("Error: this town is not in the database\n");
-      } else {
-	vector_set(townsX, townsNb, (Generic)x);
-	vector_set(townsY, townsNb, (Generic)y);
-	graph_addNode(graph); /* retourne townsNb */
-	vector_set(townsNames, townsNb, (Generic)(void*)strdup(town_name));
-
-	/* Connection à tous les autres nœuds préexistants */
-	int u;
-	for(u = 0; u < townsNb; u++) {
-	  float d = dist(x, y, vector_get(townsX, u).f, vector_get(townsY, u).f);
-	  graph_addEdge(graph, u, townsNb, d);
-	}
-
-        townsNb++;
-      }
-    }
-
-    /* Liste les noms et coordonnées des villes actuellement ajoutées
-       au graphe */
-  } else if(!strncmp(&line[i], "list", j-i-1)) {
-    /* Ne prend aucun argument */
-    int u;
-    for(u = 0; u < townsNb; u++) {
-      printf("%s (%f, %f)\n", (char*)vector_get(townsNames, u).p, 
-	     vector_get(townsX, u).f, vector_get(townsY, u).f);
-    }
-
-    /* Applique l'algorithme tsp() sur les villes actuellement dans le
-       graphei. Si un nom de fichier est passé en argument, écrit la
-       tournée dans ce fichier, sinon l'affiche simplement */
-  } else if(!strncmp(&line[i], "solve", j-i-1)) {
-    /* Prend comme argument le fichier dans lequel écrire la
-       tournée. Si aucun fichier n'est passé en argument, écrit sur la
-       sortie standard */
-    FILE* fout;
-    if(l-k == 0) {
-      fout = stdout;
-    } else {
-      line[l] = '\0';
-      if((fout = fopen(&line[k], "w")) == NULL) {
-	printf("Error: unable to open %s for writing\n", &line[k]);
-	return;
-      }
-    }
-
-    Town* path = tsp(graph);
-    
-    /* Itération sur la tournée et affichage des villes */
-    Town* a_town;
-    for(a_town = path; a_town != NULL; a_town = a_town->next) {
-      fprintf(fout, "%s\n", (char*)vector_get(townsNames, a_town->id).p);
-    }
-    
-    freeTowns(path);
-
-    if(l-k > 0)
-      fclose(fout);
-
-    /* Réinitialise le graphe */
-  } else if(!strncmp(&line[i], "reset", j-i-1)) {
-    /* Ne prend aucun argument */
-    resetGraph();
-
-    /* Quitte le programme */
-  } else if(!strncmp(&line[i], "quit", j-i-1)) {
-    /* Ne prend aucun argument */
-    freeGraph();
-    trie_free(towns);
-
-    /* Indique que l'on sort de la boucle REPL */
-    done = 1;
-
-    /* Affiche de l'aide sur une commande */
-  } else if(!strncmp(&line[i], "help", j-i-1)) {
-    /* Prend une commande en argument */
-    if(l-k == 0) {
-      printf("Usage: \"help <command>\" where <command> is the \
-command to display informations\n");
-    } else {
-      line[l] = '\0';
-
-      int u;
-      for(u = 0; commands[u] != NULL; u++) {
-	if(!strcmp(commands[u], &line[k])) {
-	  printf("%s\n", commands_help[u]);
-	  break;
-	}
-      }
-    }
-
-    /*** Code mort ***/
-    /* Anciennent utilisé à des fins de debug, set et get permettent
-       très basiquement de lire/écrire dans la BDD */
-  } else if(!strncmp(&line[i], "get", j-i-1)) {
-    float x, y;
-    char* s = stripwhite(&line[j]);
-    int err = trie_getCoord(towns, s /* stripwhite(&line[j])*/, &x, &y);
-    if(!err) {
-      printf("%f, %f\n", x, y);
-    } else {
-      printf("Erreur : ce mot n'est pas dans la base de données\n");
-    }
-
-  } else if(!strncmp(&line[i], "set", j-i-1)) {
-    float x, y;
-    char w[200];
-    sscanf(stripwhite(&line[j]), "%s %f %f", w, &x, &y);
-    towns = trie_addTown(towns, w, x, y);
-  } else if(!strncmp(&line[i], "quit", j-i-1)) {
-    trie_free(towns);
-    done = 1;
-  } else {
-    int i;
-    printf("Available commands :\n\n");
-    for(i = 0; commands[i] != NULL; i++) {
-      printf("%s : %s\n", commands[i], commands_help[i]);
+  for(i=0; env.commands[i].name != NULL; i++) {
+    if(!strcmp(args[0], env.commands[i].name)) {
+      env.commands[i].f(args, &env);
+      free(args);
+      return;
     }
   }
+
+  printf("Command not found : %s\n", args[0]);
+  free(args);
 }
 
 /*
@@ -427,7 +306,7 @@ char* words_generator(const char* text, int state) {
   static Words* list;
 
   if(state == 0) {
-    Trie* t = towns;
+    Trie* t = env.towns;
     Word* acc = NULL;
     list = NULL;
     int i;
@@ -491,7 +370,7 @@ char* commands_generator(const char* text, int state) {
     len = strlen(text);
   }
 
-  while((name = commands[list_index]) != NULL) {
+  while((name = env.commands[list_index].name) != NULL) {
     list_index++;
     
     if(strncmp(name, text, len) == 0) {
