@@ -4,20 +4,10 @@
 #include "graph.h"
 #include "vector.h"
 
-Edge* edge_cons(Edge* list, int dest, float weight) {
-  Edge* new = malloc(sizeof(Edge));
-  
-  new->dest = dest;
-  new->weight = weight;
-  new->next = list;
-
-  return new;
-}
-
 /* Renvoie un nouveau graphe vide (sans nœuds ni arêtes) */
 Graph* graph_new() {
   Graph* g = malloc(sizeof(Graph));
-  g->nodes = vector_new();
+  g->weight = vector_new();
   g->nodesNb = 0;
   return g;
 }
@@ -27,7 +17,7 @@ Graph* graph_new() {
  représente ici la liste simplement chainée vide) */
 int graph_addNode(Graph* g) {
   int newNodeId = g->nodesNb;
-  vector_set(g->nodes, newNodeId, (Generic)NULL);
+  vector_set(g->weight, newNodeId, (Generic)(void*)vector_new());
   g->nodesNb++;
 
   return newNodeId;
@@ -37,30 +27,36 @@ int graph_addNode(Graph* g) {
    numéros 0 à (nodesNb-1) */
 Graph* graph_newWithNodes(int nodesNb) {
   Graph* g = malloc(sizeof(Graph));
-  g->nodes = vector_newWithSize(nodesNb);
-  g->nodesNb = 0;
+  g->weight = vector_newWithSize(nodesNb);
+  g->nodesNb = nodesNb;
 
   int i;
   for(i=0; i < nodesNb; i++) {
-    graph_addNode(g);
+    vector_set(g->weight, i, (Generic)(void*)vector_newWithSize(nodesNb-i+1));
   }
 
   return g;
 }
 
-/* Ajoute une arête entre les nœuds d'indices n1 et n2, et de poids
-   weight. Si n1 ou n2 n'est pas dans le graphe, la fonction ne fait
-   rien. */
-void graph_addEdge(Graph* g, int n1, int n2, float weight) {
-  if(n1 < g->nodesNb && n2 < g->nodesNb) {
-    /* Il faut ajouter deux arêtes : n1->n2 et n2->n1 car le graphe
-       n'est pas orienté */
-    Edge* e1 = edge_cons(vector_get(g->nodes, n1).p, n2, weight);
-    Edge* e2 = edge_cons(vector_get(g->nodes, n2).p, n1, weight);
-
-    vector_set(g->nodes, n1, (Generic)(void*)e1);
-    vector_set(g->nodes, n2, (Generic)(void*)e2);
+void graph_setWeight(Graph* g, int n1, int n2, float weight) {
+  if(n1 > n2) {
+      int t = n1;
+      n1 = n2;
+      n2 = t;
   }
+  
+  Vector* v = (Vector*)vector_get(g->weight, n1).p;
+  vector_set(v, n2, (Generic)weight);
+}
+
+float graph_getWeight(Graph* g, int n1, int n2) {
+  if(n1 > n2) {
+    int t = n1;
+    n1 = n2;
+    n2 = t;
+  }
+
+  return vector_get(vector_get(g->weight, n1).p, n2).f;
 }
 
 /* Libère la mémoire occupée par le graphe (nœuds et arêtes) */
@@ -69,22 +65,17 @@ void graph_free(Graph* g) {
   
   int i;
   for(i=0; i < g->nodesNb; i++) {
-    Edge* e = vector_get(g->nodes, i).p;
-    while(e != NULL) {
-      Edge* next = e->next;
-      free(e);
-      e = next;
-    }
+    vector_free(vector_get(g->weight, i).p);
   }
 
-  vector_free(g->nodes);
+  vector_free(g->weight);
   free(g);
 }
 
 /* Écrit dans le fichier filename une représentation du graphe que
    l'on peut ensuite compiler avec neato (de graphviz) pour obtenir
    une représetation graphique du graphe */
-void graph_toNeato(Graph* g, char* filename) {
+/*void graph_toNeato(Graph* g, char* filename) {
   FILE* f;
 
   if((f = fopen(filename, "w")) == NULL)
@@ -103,4 +94,4 @@ void graph_toNeato(Graph* g, char* filename) {
   
   fprintf(f, "}\n");
   fclose(f);
-}
+  }*/

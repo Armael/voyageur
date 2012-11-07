@@ -3,15 +3,8 @@
 
 #include "vector.h"
 
-typedef struct edge {
-  int dest;
-  float weight;
-  
-  struct edge* next;
-} Edge;
-
 typedef struct graph {
-  Vector* nodes;
+  Vector* weight;
   int nodesNb;
 } Graph;
 
@@ -27,10 +20,9 @@ int graph_addNode(Graph* g);
    numéros 0 à (nodesNb-1) */
 Graph* graph_newWithNodes(int nodesNb);
 
-/* Ajoute une arête entre les nœuds d'indices n1 et n2, et de poids
-   weight. Si n1 ou n2 n'est pas dans le graphe, la fonction de fait
-   rien. */
-void graph_addEdge(Graph* g, int n1, int n2, float weight);
+void graph_setWeight(Graph* g, int n1, int n2, float weight);
+
+float graph_getWeight(Graph* g, int n1, int n2);
 
 /* Libère la mémoire occupée par le graphe (nœuds et arêtes) */
 void graph_free(Graph* g);
@@ -38,6 +30,6 @@ void graph_free(Graph* g);
 /* Écrit dans le fichier filename une représentation du graphe que
    l'on peut ensuite compiler avec neato (de graphviz) pour obtenir
    une représetation graphique du graphe */
-void graph_toNeato(Graph* g, char* filename);
+/*void graph_toNeato(Graph* g, char* filename);*/
 
 #endif

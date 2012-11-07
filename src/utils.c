@@ -2,7 +2,7 @@
 #include <string.h>
 
 float dist(float x1, float y1, float x2, float y2) {
-  return sqrtf(fabsf(x2 - x1) + fabsf(y2 - y1));
+  return hypotf(x2 - x1, y2 - y1);
 }
 
 int is_white(char c) {

@@ -21,7 +21,7 @@ Graph* parse_EdgesDistances(FILE* f) {
     float w;
     int ret;
     while((ret = fscanf(f, "%d %d: %f!\n", &n1, &n2, &w)) && (ret != EOF)) {
-      graph_addEdge(g, n1, n2, w);
+      graph_setWeight(g, n1, n2, w);
     }
 
     return g;
@@ -50,13 +50,11 @@ Graph* parse_VerticesCoordinates(FILE* f) {
 
     int j;
     for(i=0; i < nodes_nb+1; i++) {
-      for(j=0; j < nodes_nb+1; j++) {
-	if(i != j) { /* On ajoute pas d'arête de i vers lui-même */
+      for(j=i+1; j < nodes_nb+1; j++) {
 	  float x1, y1, x2, y2;
 	  sscanf(vector_get(v, i).p, "%f; %f!", &x1, &y1);
 	  sscanf(vector_get(v, j).p, "%f; %f!", &x2, &y2);
-	  graph_addEdge(g, i, j, dist(x1, x2, y1, y2));
-	}
+	  graph_setWeight(g, i, j, dist(x1, x2, y1, y2));
       }
     }
 

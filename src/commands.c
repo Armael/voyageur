@@ -56,11 +56,11 @@ the database to add\n");
     graph_addNode(env->graph); /* retourne townsNb */
     vector_set(env->townsNames, env->townsNb, (Generic)(void*)strdup(town_name));
     
-    /* Connection à tous les autres nœuds préexistants */
+    /* Mise à jour de la matrice de poids  */
     int u;
-    for(u = 0; u < env->townsNb;u++) {
+    for(u = 0; u < env->townsNb; u++) {
       float d = dist(x, y, vector_get(env->townsX, u).f, vector_get(env->townsY, u).f);
-      graph_addEdge(env->graph, u, env->townsNb, d);
+      graph_setWeight(env->graph, u, env->townsNb, d);
     }
     
     env->townsNb++;

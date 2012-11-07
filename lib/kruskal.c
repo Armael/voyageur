@@ -44,19 +44,12 @@ Forest* initForestFromGraph(Graph* g) {
 Kedge* KedgeListFromGraph(Graph* g, Forest* f) {
   Kedge* klist = NULL;
 
-  int i;
+  int i, j;
   for(i=0; i < g->nodesNb; i++) {
-    Edge* e = vector_get(g->nodes, i).p;
-    /* Parcours de la liste chainée des arêtes partant du nœud. On
-     obtient bien des arêtes en double (obtenues depuis a->b et b->a)
-     mais en pratique, l'algorithme de Kruskal n'est pas perturbé par
-     la présence de doublons (ceux-ci sont ignorés) */
-    while(e != NULL) {
+    for(j=i+1; j < g->nodesNb; j++) {
       klist = kruskal_cons(klist, i, vector_get(f->trees, i).p,
-		   e->dest, vector_get(f->trees, e->dest).p,
-		   e->weight);
-
-      e = e->next;
+			   j, vector_get(f->trees, j).p,
+			   graph_getWeight(g, i, j));
     }
   }
 
