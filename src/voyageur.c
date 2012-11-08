@@ -39,14 +39,13 @@ static Env env = { 0, NULL, NULL, NULL, NULL, NULL, 0,
 		     { "load_edgelist",
 		       "Loads a file containing a list of edges",
 		       "Loads a file describing the list of edges between \
-towns (1st and simpler file format). Directly fills			\
-the graph, without using the database.",
+towns (1st and simpler file format). Directly adds them to the graph, without \
+using the database.",
 		       load_edgelist },
 		     { "load_coordinates",
 		       "Loads a file containing towns coordinates",
 		       "Loads a file describing the list of towns coordinates \
-(2nd file format). Directly fills the graph, without			\
-using the database.",
+(2nd file format). Directly adds them to the graph, without using the database.",
 		       load_coordinates },
 		     { "load_db",
 		       "Loads a file containing towns names & coordinates. Fills the DB",

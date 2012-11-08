@@ -23,7 +23,7 @@ containing the database of towns with their coordinates\n");
   char* filename = args[1];
   FILE* towns_db_f;
   if((towns_db_f = fopen(filename, "r")) == NULL) {
-    printf("Error: Unable to open %s\n", filename);
+    printf("Error: Unable to open %s for reading\n", filename);
   } else {
     if(env->towns != NULL) {
       trie_free(env->towns);
