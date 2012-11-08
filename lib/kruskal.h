@@ -1,5 +1,5 @@
 #include "vector.h"
-#include "graph.h"
+#include "towns.h"
 #include "ftree.h"
 
 #ifndef KRUSKAL_H_INCLUDED
@@ -38,12 +38,12 @@ Kedge* kruskal_cons(Kedge* list, int n1, Ftree* addr1,
 /* À partir d'un graphe donné, crée une forêt où chaque Ftree est
    réduit à un nœud, et représente un nœud du graphe. Il est placé au
    même indice que dans le graphe, et contient cet indice */
-Forest* initForestFromGraph(Graph* g);
+Forest* initForestFromGraph(Towns* t);
 
 /* À partir d'un graphe donné et de la forêt retournée par
    initForestFromGraph(), retourne la liste des arêtes sous forme de
    Kedges. */
-Kedge* KedgeListFromGraph(Graph* g, Forest* f);
+Kedge* KedgeListFromGraph(Towns* t, Forest* f);
 
 /* Fait un tri fusion d'une liste d'arêtes Kedges. Complexité
    O(n log(n)) */
@@ -51,7 +51,7 @@ Kedge* mergeSort(Kedge* list);
 
 /* Applique l'algorithme de Kruskal, calculant l'arbre couvrant
    minimal d'un graphe */
-Ftree* kruskal(Graph* g);
+Ftree* kruskal(Towns* t);
 
 /* Libère la mémoire occupée par une forêt. Il ne doit pas y avoir de
    doublons dans les f->treesNb arbres de la forêt - s'il y en a, on

@@ -3,12 +3,12 @@
 #include <string.h>
 
 #include "vector.h"
-#include "graph.h"
+#include "towns.h"
 #include "trie.h"
 
 #include "utils.h"
 
-
+/*
 Graph* parse_EdgesDistances(FILE* f) {
   if(f != NULL) {
     rewind(f);
@@ -67,7 +67,7 @@ Graph* parse_VerticesCoordinates(FILE* f) {
   }
   return NULL;
 }
-
+*/
 Trie* parse_Towns(FILE* f) {
   Trie* my_towns = trie_new();
 

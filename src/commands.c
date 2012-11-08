@@ -4,7 +4,7 @@
 
 #include "generic.h"
 #include "vector.h"
-#include "graph.h"
+#include "towns.h"
 #include "trie.h"
 #include "tsp.h"
 
@@ -51,19 +51,11 @@ the database to add\n");
   if(trie_getCoord(env->towns, town_name, &x, &y) != 0) {
     printf("Error: the town \"%s\" is not in the database\n", town_name);
   } else {
-    vector_set(env->townsX, env->townsNb, (Generic)x);
-    vector_set(env->townsY, env->townsNb, (Generic)y);
-    graph_addNode(env->graph); /* retourne townsNb */
-    vector_set(env->townsNames, env->townsNb, (Generic)(void*)strdup(town_name));
+    vector_set(env->cur_towns->x, env->cur_towns->nb, (Generic)x);
+    vector_set(env->cur_towns->y, env->cur_towns->nb, (Generic)y);
+    vector_set(env->cur_towns->names, env->cur_towns->nb, (Generic)(void*)strdup(town_name));
     
-    /* Mise à jour de la matrice de poids  */
-    int u;
-    for(u = 0; u < env->townsNb; u++) {
-      float d = dist(x, y, vector_get(env->townsX, u).f, vector_get(env->townsY, u).f);
-      graph_setWeight(env->graph, u, env->townsNb, d);
-    }
-    
-    env->townsNb++;
+    env->cur_towns->nb++;
   }
 }
 
@@ -94,9 +86,9 @@ from the DB\n");
 
 void list(char** args, Env* env) {
   int u;
-  for(u = 0; u < env->townsNb; u++) {
-    printf("%s (%f, %f)\n", (char*)vector_get(env->townsNames, u).p,
-	   vector_get(env->townsX, u).f, vector_get(env->townsY, u).f);
+  for(u = 0; u < env->cur_towns->nb; u++) {
+    printf("%s (%f, %f)\n", (char*)vector_get(env->cur_towns->names, u).p,
+	   vector_get(env->cur_towns->x, u).f, vector_get(env->cur_towns->y, u).f);
   }
 }
 
@@ -117,12 +109,12 @@ void solve(char** args, Env* env) {
 
   printf("Calculating salesman's travel…\n");
 
-  Town* path = tsp(env->graph);
+  Town* path = tsp(env->cur_towns);
 
   /* Itération sur la tournée et affichage des villes */
   Town* a_town;
   for(a_town = path; a_town != NULL; a_town = a_town->next) {
-    fprintf(fout, "%s\n", (char*)vector_get(env->townsNames, a_town->id).p);
+    fprintf(fout, "%s\n", (char*)vector_get(env->cur_towns->names, a_town->id).p);
   }
 
   freeTowns(path);
@@ -132,11 +124,11 @@ void solve(char** args, Env* env) {
 }
 
 void reset(char** args, Env* env) {
-  resetGraph(env);
+  env_resetTowns(env);
 }
 
 void quit(char** args, Env* env) {
-  freeGraph(env);
+  env_freeTowns(env);
   trie_free(env->towns);
   env->done = 1;
 }

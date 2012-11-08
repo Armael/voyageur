@@ -10,11 +10,11 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-#include "graph.h"
 #include "vector.h"
 #include "trie.h"
 #include "tsp.h"
 
+#include "towns.h"
 #include "utils.h"
 #include "colors.h"
 #include "parsers.h"
@@ -34,7 +34,7 @@
  * l'autocomplétion et l'aide sur les commandes)
  */
 
-static Env env = { 0, NULL, NULL, NULL, NULL, NULL, 0,
+static Env env = { 0, NULL, NULL,
 		   {
 		     { "load_edgelist",
 		       "Loads a file containing a list of edges",
@@ -101,29 +101,22 @@ void execute_line(char* line);
 /* Initialise la bibliothèque readline pour l'autocomplétion */
 void initialize_readline();
 
-void freeGraph(Env* env) {
-  graph_free(env->graph);
-
-  int u;
-  for(u = 0; u < env->townsNb; u++) {
-    free(vector_get(env->townsNames, u).p);
+void env_freeTowns(Env* env) {
+  if(env->towns) {
+    int u;
+    for(u = 0; u < env->cur_towns->nb; u++) {
+      free(vector_get(env->cur_towns->names, u).p);
+    }
+    towns_free(env->cur_towns);
   }
-  vector_free(env->townsNames);
-  vector_free(env->townsX);
-  vector_free(env->townsY);
 }
 
 /* Réinitialise le graphe, libère la mémoire et le prépare à un nouvel
    usage */
-void resetGraph(Env* env) {
-  freeGraph(env);
-
-  env->townsNb = 0;
-
-  env->graph = graph_new();
-  env->townsNames = vector_new();
-  env->townsX = vector_new();
-  env->townsY = vector_new();
+void env_resetTowns(Env* env) {
+  env_freeTowns(env);
+  
+  env->cur_towns = towns_new();
 }
 
 int main() {
@@ -131,14 +124,14 @@ int main() {
 
   printf(MESSAGE);
 
-  resetGraph(&env);
+  env_resetTowns(&env);
 
   initialize_readline();
 
   while(env.done == 0) {
     char prompt[40];
-    if(env.townsNb) {
-      snprintf(prompt, 40, "(%d towns) %s>%s ", env.townsNb,
+    if(env.cur_towns->nb) {
+      snprintf(prompt, 40, "(%d towns) %s>%s ", env.cur_towns->nb,
 	       ANSI_GREEN, ANSI_NORMAL);
     } else {
       snprintf(prompt, 40, "%s>%s ", ANSI_GREEN, ANSI_NORMAL);

@@ -1,7 +1,7 @@
 #ifndef TSP_H_INCLUDED
 #define TSP_H_INCLEDED
 
-#include "graph.h"
+#include "towns.h"
 
 typedef struct town {
   int id;
@@ -10,7 +10,7 @@ typedef struct town {
 } Town;
 
 /* Algorithme TSP */
-Town* tsp(Graph* g);
+Town* tsp(Towns* t);
 
 /* Fonction de libération de la liste des villes retournée par
    tsp() */

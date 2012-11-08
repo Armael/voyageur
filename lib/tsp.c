@@ -1,6 +1,6 @@
 #include "vector.h"
 #include "ftree.h"
-#include "graph.h"
+#include "towns.h"
 #include "kruskal.h"
 #include "tsp.h"
 
@@ -49,8 +49,8 @@ void freeTowns(Town* list) {
 }
 
 /* Algorithme TSP */
-Town* tsp(Graph* g) {
-  Ftree* couvrant = kruskal(g);
+Town* tsp(Towns* t) {
+  Ftree* couvrant = kruskal(t);
 
   Town* path = prefixTravel(couvrant);
 

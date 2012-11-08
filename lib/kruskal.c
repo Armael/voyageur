@@ -2,7 +2,8 @@
 #include <stdio.h>
 
 #include "vector.h"
-#include "graph.h"
+#include "towns.h"
+#include "utils.h"
 #include "ftree.h"
 #include "kruskal.h"
 
@@ -20,15 +21,15 @@ Kedge* kruskal_cons(Kedge* list, int n1, Ftree* addr1,
   return new;
 }
 
-/* À partir d'un graphe donné, crée une forêt où chaque Ftree est
-   réduit à un nœud, et représente un nœud du graphe. Il est placé au
-   même indice que dans le graphe, et contient cet indice */
-Forest* initForestFromGraph(Graph* g) {
+/* À partir d'un ensemble de villes, crée une forêt où chaque Ftree
+   est réduit à un nœud, et représente une ville. Il est placé au même
+   indice que dans les Vectors de t, et contient cet indice */
+Forest* initForestFromGraph(Towns* t) {
   Forest* f = malloc(sizeof(Forest));
 
   /* On connait le nombre de nœuds à l'avance, optimisons, donc */
-  f->trees = vector_newWithSize(g->nodesNb);
-  f->treesNb = g->nodesNb;
+  f->trees = vector_newWithSize(t->nb);
+  f->treesNb = t->nb;
 
   int i;
   for(i=0; i < f->treesNb; i++) {
@@ -38,18 +39,22 @@ Forest* initForestFromGraph(Graph* g) {
   return f;
 }
 
-/* À partir d'un graphe donné et de la forêt retournée par
+/* À partir d'un ensemble de villes et de la forêt retournée par
    initForestFromGraph(), retourne la liste des arêtes sous forme de
    Kedges. */
-Kedge* KedgeListFromGraph(Graph* g, Forest* f) {
+Kedge* KedgeListFromGraph(Towns* t, Forest* f) {
   Kedge* klist = NULL;
 
   int i, j;
-  for(i=0; i < g->nodesNb; i++) {
-    for(j=i+1; j < g->nodesNb; j++) {
+  float weight;
+  for(i=0; i < t->nb; i++) {
+    for(j=i+1; j < t->nb; j++) {
+      weight = dist2(vector_get(t->x, i).f, vector_get(t->y, i).f,
+		     vector_get(t->x, j).f, vector_get(t->y, j).f);
+
       klist = kruskal_cons(klist, i, vector_get(f->trees, i).p,
 			   j, vector_get(f->trees, j).p,
-			   graph_getWeight(g, i, j));
+			   weight);
     }
   }
 
@@ -104,7 +109,7 @@ Kedge* merge(Kedge* part1, Kedge* part2) {
     } else if(p1->weight < p2->weight) {
       to_add = p1;
       p1 = p1->next;
-    } else if(p1->weight >= p2->weight) {
+    } else {
       to_add = p2;
       p2 = p2->next;
     }
@@ -137,9 +142,9 @@ Kedge* mergeSort(Kedge* list) {
 
 /* Applique l'algorithme de Kruskal, calculant l'arbre couvrant
    minimal d'un graphe */
-Ftree* kruskal(Graph* g) {
-  Forest* f = initForestFromGraph(g);
-  Kedge* ke = KedgeListFromGraph(g, f);
+Ftree* kruskal(Towns* t) {
+  Forest* f = initForestFromGraph(t);
+  Kedge* ke = KedgeListFromGraph(t, f);
 
   ke = mergeSort(ke);
   Kedge* start = ke;

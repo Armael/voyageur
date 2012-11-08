@@ -1,13 +1,13 @@
-SRC := voyageur.c parsers.c utils.c commands.c
-LIBS := vector.c graph.c trie.c ftree.c kruskal.c tsp.c
+SRC := voyageur.c parsers.c commands.c
+LIBS := vector.c trie.c ftree.c kruskal.c tsp.c utils.c towns.c
 
 SRC := $(patsubst %,src/%,$(SRC))
 LIBS := $(patsubst %,lib/%,$(LIBS))
 OBJ := $(patsubst %.c,%.o,$(SRC) $(LIBS))
 DEP := ${OBJ:.o=.dep}
 
-SRC_TEST := vector.c graph.c ftree.c kruskal.c
-LIBS_TEST := vector.c graph.c ftree.c kruskal.c
+SRC_TEST := vector.c ftree.c kruskal.c
+LIBS_TEST := vector.c ftree.c kruskal.c
 
 SRC_TEST := $(patsubst %,tests/%,$(SRC_TEST))
 LIBS_TEST := $(patsubst %,lib/%,$(LIBS_TEST))
@@ -19,7 +19,7 @@ DEP_TEST := ${OBJ_TEST:.o=.dep}
 CC := gcc
 CFLAGS := -Wall -Wextra -Wunused -Wconversion -Wno-sign-conversion
 CFLAGS += -Ilib -Itests
-CFLAGS += -g -O0
+CFLAGS += -O0 -g
 
 .PHONY: all build-tests tests clean mproper
 

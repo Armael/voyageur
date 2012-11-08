@@ -26,26 +26,15 @@ struct Env {
      coordonnées */
   Trie* towns;
 
-  /* Le graphe des villes sélectionnées, sur lesquelles on appliquera
-     l'algorithme de résolution du problème du voyageur du commerce */
-  Graph* graph;
-
-  /* Un tableau, indicé par les nœuds du graphe, et qui à chacun associe
-     le nom de la ville correspondante */
-  Vector* townsNames;
-  /* La même chose, mais associe la coordonnée X de la ville */
-  Vector* townsX;
-  /* La même chose, mais associe la coordonnée Y de la ville */ 
-  Vector* townsY;
-
-  /* Nombre de villes dans le graphe (égal au nombre de nœuds) */
-  int townsNb;
+  /* Données des villes actuellement ajoutées, et sur lesquelles
+     portera l'algorithme de résolution TSP */
+  Towns* cur_towns;
 
   Command commands[];
 };
 
-void freeGraph(Env* env);
-void resetGraph(Env* env);
+void env_freeTowns(Env* env);
+void env_resetTowns(Env* env);
 
 
 #endif
