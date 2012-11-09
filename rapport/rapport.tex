@@ -230,6 +230,19 @@ Cela est fait de manière récursive par la fonction \texttt{prefixTravel\_}. Le
 
 \addcontentsline{toc}{section}{Conclusion}
 \section*{Conclusion}
+\paragraph*{}
+Nous obtenons donc à l'aide de l'algorithme de Kruskal et de l'algorithme TSP, une résolution du problème du voyageur de commerce qui, même si elle n'est pas optimale, renvoie des résultats acceptable. En effet, les tests que nous avons effectuer nous ont permis de constater que les résultats obtenus ne contenaient pas de parcours absurdes dont il est évident qu'ils sont bien trop long.
+\paragraph*{}
+La structure de donnée crée à l'aide des tries permet de charger des milliers de villes (l'ensemble des villes française) en quelque seconde et de ressortir celle demandée en un temps aussi acceptable.
+\paragraph*{}
+L'interface utilisateur utilisant les convention UNIX permet de chargés differentes bases de données (uniquement les grandes villes française ou aussi les petites communes), de rentrer une liste de ville à parcourir à la main ou à l'aide d'un fichier texte.
+\paragraph*{}
+Nous avons rencontrer des difficultées de compléxité qui empêchaient d'appliquer le programme à un trop grand nombre de ville (de l'ordre du millier) et qui nous ont amené à changer certaine de nos structure de données notament la structure de graphe pour obtenir des fonctions bien plus rapide.
+\paragraph*{}
+Toutefois, le programme n'est pas encore optimal. Même si appliquer l'algorithme à 3000 villes ne prend plus que 12 seconde, il reste difficile d'atteindre 10 000 villes. La structure de donnée stockant les arêtes peut être la source de cette faiblesse. Une amélioration possible serait de remplacer la structure de liste par un tableau qui permettrait de trier sur place les arêtes.
+
+
+
 
 
 \end{document}
