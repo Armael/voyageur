@@ -56,34 +56,35 @@ Le cœur du projet repose sur l'utilisation d'un algorithme glouton, nommé ici 
 
 \subsection{Algorithmes de Kruskal}
 
-\paragraph*{} L'algorithme de Kruskal est l'algorithme qui permet de construire l'arbre couvrant minimal. Il s'agit de réunir toutes les arêtes du graphe en un seul arbre. On commence par trier toutes les arêtes par ordre croissant de poids. Puis on construit une forêt qui est initialement composée d'arbres dont le seul noeud est la racine avec chaque racine étiquettée par un sommet différent du graphe. Il s'agit ensuite de lier les arbres en parcourant les arêtes : si les deux sommets qui constituent l'arête en tête de liste appartiennent à des arbres différents, on lie ces deux arbres par ces sommets; sinon on passe à l'arête suivante.
+\paragraph*{} L'algorithme de \emph{Kruskal} permet de construire un arbre couvrant minimal pour un graphe donné, à savoir un arbre composé de tous les sommets du graphe, et de poids minimal. Il commence par trier toutes les arêtes par ordre croissant de poids, puis construit une forêt qui est initialement composée d'arbres à un nœud, correspondant aux sommets du graphe. \\
+Il s'agit ensuite de lier les arbres en parcourant les arêtes (triées) : si les deux sommets que lie l'arête appartiennent à des arbres différents dans la forêt, on relie ces deux arbres par ces sommets; sinon on passe à l'arête suivante.
 \paragraph*{}
-Formellement celà s'écrit :
+Formellement cela s'écrit :
 
 \medskip
 
 \begin{algorithm}[H]
 \SetAlgoLined
-\KwData{Le graphe G=(V, E) des villes et sa fonction de poids $w$}
-\KwResult{T, un arbre couvrant minimal du graphe}
-Trier E par ordre croissant de poids selon $w$\;
-Construire la forêt F, composée des arbres associés aux sommets\;
-\ForEach{e=(v1, v2) $\in$ E $trié$}{
-\eIf{v1 et v2 appartiennent à un arbre différent}{
-Lier v1 et v2, et donc les arbres qui les contiennent\;
-}{
-Passer à l'arête suivante\;
+\KwData{Le graphe $G=(V, E)$ des villes et sa fonction de poids $w$}
+\KwResult{$T$, un arbre couvrant minimal du graphe}
+Trier $E$ par ordre croissant de poids selon $w$\;
+Construire la forêt $F$, composée des arbres associés aux sommets\;
+\ForEach{$e=(v1, v2)$ $\in$ $E$ $trié$}{
+  \eIf{$v1$ et $v2$ appartiennent à un arbre différent}{
+    Lier $v1$ et $v2$, et donc les arbres qui les contiennent\;
+  }{
+    Passer à l'arête suivante\;
+  }
 }
-}
-\caption{Algorithme de Kruskal}
+\caption{Algorithme de \emph{Kruskal}}
 \end{algorithm}
 
 \medskip
 
-Pour des raisons de complexité, nous voulons pouvoir vérifier que deux sommets n'appartiennent pas au même arbre et lier deux arbres en temps constant. Cela entraîne deux contraintes :
+Pour améliorer les performances, nous voulons pouvoir vérifier que deux sommets n'appartiennent pas au même arbre et lier deux arbres en temps constant. Cela entraîne deux contraintes :
 \begin{itemize}
-\item Les arbres doivent être non-enracinés pour pouvoir les lier aisément.
-\item La forêt doit avoir une structure permettant une vérification instantanée de l'appartenance à un arbre.
+\item Les arbres doivent être non-enracinés pour pouvoir les fusionner aisément.
+\item La forêt doit avoir une structure permettant la vérification instantanée de l'appartenance à un arbre.
 \end{itemize}
 
 \subsection{Parcours de tries}
@@ -121,7 +122,7 @@ Le graphe n'est pas représenté par une structure usuelle de graphe avec une li
 
 \subsection{Arbres non-enracinée}
 
-Les arbres non-enracinés permettent de lier d'unir deux arbres par deux de leur noeuds sans avoir à se préoccuper de notion de racine à déplacer, chaque noeud de l'arbre représente l'arbre. Ceci nous permet de respecter les contraintes en compléxité. 
+Les arbres non-enracinés permettent de lier d'unir deux arbres par deux de leur noeuds sans avoir à se préoccuper de notion de racine à déplacer, chaque noeud de l'arbre représente l'arbre. Ceci nous permet de respecter les contraintes en complexité. 
 
 \begin{verbatim}
 typedef struct ftree {
