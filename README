@@ -1,0 +1,49 @@
+Compilation
+===========
+
+La bibliothèque readline est nécessaire (paquet libreadline-dev sous
+Debian et dérivés) (elle est installée sur les SLS).
+
+Pour compiler le projet, lancer :
+
+     make
+
+Un binaire nommé voyageur sera alors présent à la racine du projet.
+
+Utilisation
+===========
+
+Lancer le binaire sans arguments :
+
+     ./voyageur
+
+Celui-ci se comporte comme un interpréteur de commandes intéractif,
+gérant l'autocomplétion contextuelle : à tout moment, il est possible
+de taper TAB (deux fois en cas d'ambiguiter) pour compléter, ou
+afficher les différentes possibilités en fonction du contexte.
+
+La liste des commandes est disponible en tapant 'help' avec une courte
+description. Une description plus complète pour une commande donnée
+est accessible en tapant 'help <commande>'.
+
+Pour nettoyer le projet des fichiers de compilation :
+
+     make clean
+
+Pour nettoyer et enlever les binaires :
+
+     make mproper
+
+Tests
+=====
+
+Les tests sont automatisés : pour lancer l'ensemble des tests, taper :
+
+    make tests
+
+Il est également possible de compiler les tests sans les lancer :
+   
+    make build-tests
+
+Les binaires sont alors accessibles dans le dossier tests/, et peuvent
+être lancés séparément (un binaire pour chaque suite de tests).
