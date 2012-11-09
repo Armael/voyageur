@@ -272,7 +272,7 @@ Words* explore(Trie* t, Word* acc, Words* list) {
     if(l->next != NULL) {
       Word* acc_ = cons(l->letter, acc);
       if(l->next->is_word) {
-	list = cons_word(to_string(acc_), list);
+        list = cons_word(to_string(acc_), list);
       }
       
       list = explore(l->next, acc_, list);
