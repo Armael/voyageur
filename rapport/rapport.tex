@@ -4,8 +4,8 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{graphicx}
-\usepackage{algorithm2e}
 \usepackage{amsmath, amsthm, amssymb}
+\usepackage[lined,boxed]{algorithm2e}
 
 \sloppy
 
@@ -36,6 +36,23 @@ Nous allons tout d’abord présenter les algorithmes que nous avons cherché à
 \section{Algorithmes}
 
 \subsection{TSP}
+Le cœur du projet repose sur l'utilisation d'un algorithme glouton, nommé ici \emph{TSP}. Celui-ci donne une solution approchée au problème du voyageur du commerce, appelée \textit{tournée} , sous la forme d'une liste de villes. La description de l'algorithme est la suivante :
+
+\begin{algorithm}[H]
+  \SetAlgoLined
+  \KwData{Le graphe $G$ des villes et sa fonction de poids $w$}
+  \KwResult{\textit{Tournée} pour le voyageur du commerce (liste de villes)}
+  $T := $ un arbre couvrant minimal de $G$\;
+  $L := $ parcours\_préfixe($T$)\;
+  retourner $L$\;
+  \caption{Algorithme TSP}
+\end{algorithm}
+
+\emph{TSP} repose ainsi sur des structures de graphe, d'arbre et de liste. \\
+\begin{itemize}
+\item Le graphe est donné par sa fonction de poids, et ici \emph{TSP} n'impose pas de contrainte supplémentaire sur les opérations que l'on veut pouvoir faire sur le graphe, puisqu'il le passe simplement en argument à la fonction de calcul d'arbre couvrant minimal.
+\item La structure d'arbre doit pouvoir se parcourir efficacement. Une implémentation telle que réalisée en TP semble convenir pour le moment (un arbre est un nœud racine et des pointeurs vers les fils), adaptée pour gérer un nombre quelconque de fils.
+\end{itemize}
 
 \subsection{Algorithmes de Kruskal}
 
