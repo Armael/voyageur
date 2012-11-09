@@ -52,6 +52,7 @@ les villes d'après une liste de noms.
 Plusieurs listes de noms (tirées au hasard) sont disponibles,
 également dans le dossier data/ : elles sont toutes de la forme
 names_listX où X est le nombre de villes dans la liste.
+(il s'agit de listes de villes de la base de données Towns.txt)
 
 Pour nettoyer le projet des fichiers de compilation :
 
