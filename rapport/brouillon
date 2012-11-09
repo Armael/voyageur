@@ -1,0 +1,29 @@
+Plan :
+Dans l’introduction
+
+I - Les algorithmes
+[Court]
+-> Présentation
+-> En déduire les contraintes sur les structures de données sous-jacentes (par exemple, justifier l’utilisation de Vector (tableaux extensibles) : on veut pouvoir rajouter autant de nœuds que nécessaire aux graphes, ajouter des voisins au ftree…, mais on n’utilise pas de listes chainées car ensuite l’accès se fait majoritairement en lecture, et on veut des accès en O(1))
+
+II - Les structures de données
+-> Structures génériques, potentiellement utilisées/utilisables par plusieurs algorithmes/programmes différents. Implémentées par conséquent sous forme d’un .c et un .h séparés…
+-> Présenter l’introduction de generic.h pour pouvoir créer des structures de données réutilisables
+[Une sous partie par structure, explication du choix, des problématiques sur la structure et de l’implémentation. Uniquement les lib propres, on explicitera rapidement les structure de donnée utile uniquement au sein des algo plus loin.]
+Différentes structures de données implémentées : Vector, Ftree (pour Kruskal), Trie (première idée et amélioration) (comme BDD pour le toplevel)
+
+III - Implémentation des algos
+- Kruskal (problème de la réunion de la forêt en un arbre)
+- TSP
+- Algo utilisant la BDD pour fournir de l’autocomplétion
+
+IV - Problématiques pratiques de développement : bibliothèques et outils utilisés,
+-> Développement d’une testsuite pour faire simplement des tests unitaires
+-> Un makefile gérant bien proprement les dépendance entre fichiers (cf. article)
+-> Utilisation de la bibliothèque readline pour fournir une interface CLI agréable et conforme aux standards UNIX.
+-> Utilisation de valgrind avec les outils memcheck et massif pour le debuggage/profilage (a permis de se rendre compte des problèmes avec Trie)
+
+
+Bibliographie :
+- Wikipédia (c’est triste mais c’est comme ça...)
+- Article de Peter Miller sur les makefiles
