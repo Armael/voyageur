@@ -176,6 +176,8 @@ La forêt est ici codée un vector, ce qui permet d'accéder instantanément à 
 
 \subsection{Les tries}
 
+Une trie est un arbre dont la racine n'est pas indexé et dont chaque noeud est indéxé par un caractère. Cette structure permet de rechercher un mot en un temps linéaire en la taille de ce mot, car chaque chemin dans cet arbre représente un mot ou un préfixe. Ainsi pour rechercher un mot il suffit de chercher chacune des lettres qui le compose à chaque étage.
+
 \begin{verbatim}
 struct trie {
   float coord_x;
@@ -190,6 +192,8 @@ struct letter {
   struct letter *tail;
 };
 \end{verbatim}
+
+Notre structure de trie est construite à l'aide d'une sous structure, letter, qui représente la liste des lettres présente à un étage de la trie et la trie qui découle de chacune. \texttt{is\_word} permet de savoir à chaque étape de la trie si on se trouve à la fin d'un mot et \texttt{coord\_x}, \texttt{coord\_y} représentent les coordonnées de la ville dont c'est le nom.
 
 \section{Implémentation des algorithmes}
 
