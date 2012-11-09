@@ -56,7 +56,7 @@ Le cœur du projet repose sur l'utilisation d'un algorithme glouton, nommé ici 
 
 \subsection{Algorithmes de Kruskal}
 
-\paragraph*{} L'algorithme de Kruskal est l'algorithme qui permet de construire l'arbre couvrant minimal. Il s'agit de réunir toutes les arêtes du graph en un seul arbre. On commence par trier toutes les arêtes par ordre croissant de poids. Puis on construit une forêt qui est initialement composée d'arbres dont le seul noeud est la racine avec chaque racine étiquetté par un sommet différent du graph. Il s'agit ensuite de lier les arbres en parcourant les arêtes : si les deux sommets qui constituent l'arête en tête de liste appartiennent à des arbres différents, on lie ces deux arbres par ces sommets; sinon on passe à l'arête suivante.
+\paragraph*{} L'algorithme de Kruskal est l'algorithme qui permet de construire l'arbre couvrant minimal. Il s'agit de réunir toutes les arêtes du graphe en un seul arbre. On commence par trier toutes les arêtes par ordre croissant de poids. Puis on construit une forêt qui est initialement composée d'arbres dont le seul noeud est la racine avec chaque racine étiquettée par un sommet différent du graphe. Il s'agit ensuite de lier les arbres en parcourant les arêtes : si les deux sommets qui constituent l'arête en tête de liste appartiennent à des arbres différents, on lie ces deux arbres par ces sommets; sinon on passe à l'arête suivante.
 \paragraph*{}
 Formellement celà s'écrit :
 
@@ -80,7 +80,7 @@ Passer à l'arête suivante\;
 
 \medskip
 
-Pour des raisons de compléxité, nous voulons pouvoir vérifier que deux sommets n'appartiennent pas au même arbre et lier deux arbres en temps constant. Cela entraine deux contraintes :
+Pour des raisons de complexité, nous voulons pouvoir vérifier que deux sommets n'appartiennent pas au même arbre et lier deux arbres en temps constant. Cela entraîne deux contraintes :
 \begin{itemize}
 \item Les arbres doivent être non-enracinés pour pouvoir les lier aisément.
 \item La forêt doit avoir une structure permettant une vérification instantanée de l'appartenance à un arbre.
@@ -90,10 +90,10 @@ Pour des raisons de compléxité, nous voulons pouvoir vérifier que deux sommet
 
 \paragraph*{}Les tries dont nous détaillerons l'implémentation dans la Section~\ref{se:structures} nous ont semblé être adaptées pour gérer des nombreuses villes et leur coordonnées. En effet, leur structure sous forme de dictionnaire permet de retrouver rapidement une ville comme nous allons le constater.
 
-\section{Les structures de donées}
+\section{Les structures de données}
 \label{se:structures}
 
-Une fois les algorithmes choisis (TSP nous était imposé et Kruskal fortement imposé), il nous fallait choisir les structures de données adaptées. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement reservir pour d'autes projets. Cependant, pour l'algorithme de Kruskal nous avons développé des structures spécifiques.
+Une fois les algorithmes choisis (TSP nous était imposé et Kruskal fortement imposé), il nous fallait choisir les structures de données adaptées. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement resservir pour d'autres projets. Cependant, pour l'algorithme de \emph{Kruskal} nous avons développé des structures spécifiques.
 
 \subsection{La structure Generic}
 
@@ -117,7 +117,7 @@ typedef struct Vector {
 
 \subsection{Le graphe}
 
-Le graphe n'est pas représenter par une structure usuelle de graphe avec une liste de sommet et d'arêtes. En effet, chaque sommet du graphe est lié à chaque autre il est donc inutile et lourd de garder en mémoire une structure de graphe avec des arêtes.
+Le graphe n'est pas représenté par une structure usuelle de graphe avec une liste de sommets et d'arêtes. En effet, chaque sommet du graphe est lié à chaque autre il est donc inutile et lourd de garder en mémoire une structure de graphe avec des arêtes.
 
 \subsection{Arbres non-enracinée}
 
@@ -180,7 +180,10 @@ struct letter {
 \section{Implémentation des algorithmes}
 
 \subsection{TSP}
+L'algorithme \emph{TSP} ne fait en lui même pas grand chose : il s'agit d'appeler \emph{Kruskal}, puis de faire un parcours préfixe du \texttt{Ftree*} obtenu.
 
+\paragraph*{}
+Cela est fait de manière récursive par la fonction \texttt{prefixTravel_}. Le parcours d'un \texttt{Ftree*} est presque naturel, il faut simplement prendre garde de passer en argument, lors de l'appel récursif, l'adresse du nœud duquel on vient, celui-ci étant également voisin du nouveau nœud sur lequel on appelle.
 \subsection{Algorithmes de Kruskal}
 
 \subsection{Parcours de tries}
