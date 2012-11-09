@@ -55,6 +55,7 @@ Le cœur du projet repose sur l'utilisation d'un algorithme glouton, nommé ici 
 \end{itemize}
 
 \subsection{Algorithme de Kruskal}
+\label{sse:kruskalAlgo}
 
 \paragraph*{} L'algorithme de \emph{Kruskal} permet de construire un arbre couvrant minimal pour un graphe donné, à savoir un arbre composé de tous les sommets du graphe, et de poids minimal. Il commence par trier toutes les arêtes par ordre croissant de poids, puis construit une forêt qui est initialement composée d'arbres à un nœud, correspondant aux sommets du graphe. \\
 Il s'agit ensuite de lier les arbres en parcourant les arêtes (triées) : si les deux sommets que lie l'arête appartiennent à des arbres différents dans la forêt, on relie ces deux arbres par ces sommets; sinon on passe à l'arête suivante.
@@ -96,7 +97,6 @@ En parallèle de l'algorithme principal, il était nécessaire d'implémenter un
 Nous aurions pu implémenter une table de hachage générique, cependant ici, connaître la nature des clés (il s'agit de chaînes de caractères) nous permettra, lors du choix de la structure, d'optimiser grandement.
 
 \section{Les structures de données}
-\label{se:structures}
 
 Une fois les algorithmes choisis et qu'a été définie la manière précise dont ils ont besoin d'utiliser les structures sous-jacentes, il faut effectivement les choisir et les implémenter. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement resservir pour d'autres projets. Cependant, pour l'algorithme de \emph{Kruskal} nous avons développé des structures plus spécifiques.
 
@@ -216,7 +216,14 @@ L'algorithme \emph{TSP} ne fait en lui même pas grand chose : il s'agit d'appel
 \paragraph*{}
 Cela est fait de manière récursive par la fonction \texttt{prefixTravel\_}. Le parcours d'un \texttt{Ftree*} est presque naturel, il faut simplement prendre garde de passer en argument, lors de l'appel récursif, l'adresse du nœud duquel on vient, celui-ci étant également voisin du nouveau nœud sur lequel on appelle.
 
-\subsection{Algorithmes de Kruskal}
+\subsection{Algorithme de Kruskal}
+
+\paragraph*{}
+Dans un premier temps il s'agit de construire la forêt. Connaissant le nombre de noeud à l'avance il suffit de créer un tableau d'arbres non-enracinés indexé par la case du tableau dans laquelle ils sont. Il n'y a pas besoin de retenir le nom des villes car ils sont contenus ailleurs et peuvent être retrouvé grâce à l'indice. Le nombre de noeud est donc la seule donnée necessaire.
+\paragraph*{}
+On crée ensuite la liste des arêtes en parcourant le graphe et en ajoutant une arêtes pour chaque couple de ville avec la fonction de poids associé, liste qu'on trie ensuite à l'ide de l'algorithme de trie fusion.
+\paragraph*{}
+Une fois la liste des arêtes triées et la forêt créés, il suffit d'appliquer l'algorithme de Kruskal comme expliqué dans la sous-section~\ref{sse:kruskalAlgo}.
 
 \subsection{Parcours de tries}
 
