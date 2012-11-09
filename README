@@ -10,6 +10,12 @@ Pour compiler le projet, lancer :
 
 Un binaire nommé voyageur sera alors présent à la racine du projet.
 
+Pour compiler le rapport, lancer :
+
+     make rapport
+
+Le rapport sera alors dans rapport/rapport.pdf
+
 Utilisation
 ===========
 

@@ -25,6 +25,11 @@ CFLAGS += $(DEBUGFLAGS)
 
 all: voyageur
 
+rapport: rapport/rapport.pdf
+
+rapport/rapport.pdf: rapport/rapport.tex
+	cd rapport && pdflatex rapport.tex && pdflatex rapport.tex
+
 voyageur: $(OBJ)
 	$(CC) $(CFLAGS) -lm -lreadline -o $@ $(OBJ)
 
@@ -43,6 +48,9 @@ tests: build-tests
 clean: 
 	rm -rf $(OBJ) $(OBJ_TEST)
 	rm -rf $(DEP) $(DEP_TEST)
+	rm rapport/*.aux
+	rm rapport/*.log
+	rm rapport/*.toc
 
 mproper: clean
 	rm -f voyageur
