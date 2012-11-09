@@ -226,7 +226,7 @@ On crée ensuite la liste des arêtes en calculant au fur et à mesure les poids
 \paragraph*{}
 Une fois la liste des arêtes triées et la forêt créés, il suffit d'appliquer l'algorithme de Kruskal comme expliqué dans la sous-section~\ref{sse:kruskalAlgo}, et en effectuant les manipulations post-fusion de \texttt{Ftree}s sur la forêt.
 \paragraph*{}
-Les fonction merge et split sont, contrairement à la programmation instinctive, ittératives. En effet, pour des nombres de villes suffisament grands, des fonctions itératives soulèvent des \texttt{stack overflow}.
+Les fonctions merge et split sont ici, contrairement à une version instinctive, itératives. En effet, nous avons constaté que pour un nombre de villes suffisamment grand, les versions récursives (notamment \texttt{merge}) finissent par échouer par \textit{stack overflow}.
 \subsection{Parcours de tries}
 
 \paragraph*{}Les tries sont optimisées pour avoir un parcours très simple. Il suffit de rechercher à chaque étage de la trie les lettres du mot en entrée et de renvoyer des erreurs si les lettres ne sont pas présentent ou si lorsque le mot est terminé \texttt{is\_word} n'est pas à 1.
