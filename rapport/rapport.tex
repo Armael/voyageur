@@ -219,13 +219,13 @@ Cela est fait de manière récursive par la fonction \texttt{prefixTravel\_}. Le
 \subsection{Algorithme de Kruskal}
 
 \paragraph*{}
-Dans un premier temps il s'agit de construire la forêt. Connaissant le nombre de noeud à l'avance il suffit de créer un tableau d'arbres non-enracinés indexé par la case du tableau dans laquelle ils sont. Il n'y a pas besoin de retenir le nom des villes car ils sont contenus ailleurs et peuvent être retrouvé grâce à l'indice. Le nombre de noeud est donc la seule donnée necessaire.
+Dans un premier temps il s'agit de construire la forêt. Connaissant le nombre de noeuds à l'avance, il suffit de créer un tableau d'arbres non-enracinés indexé par la case du tableau dans laquelle ils sont. On raisonne ici uniquement sur les indices des nœuds, les \texttt{Vector} de la structure \texttt{Towns} font la correspondance avec les noms et les coordonnées. Le nombre de nœuds est donc la seule donnée nécessaire.
 \paragraph*{}
-On crée ensuite la liste des arêtes en parcourant le graphe et en ajoutant une arêtes pour chaque couple de ville avec la fonction de poids associé, liste qu'on trie ensuite à l'ide de l'algorithme de trie fusion.
+On crée ensuite la liste des arêtes en calculant au fur et à mesure les poids à partir des coordonnées et en ajoutant une arête pour chaque couple de ville, liste qu'on trie ensuite grâce à un tri fusion.
 \paragraph*{}
-Une fois la liste des arêtes triées et la forêt créés, il suffit d'appliquer l'algorithme de Kruskal comme expliqué dans la sous-section~\ref{sse:kruskalAlgo}.
+Une fois la liste des arêtes triées et la forêt créés, il suffit d'appliquer l'algorithme de Kruskal comme expliqué dans la sous-section~\ref{sse:kruskalAlgo}, et en effectuant les manipulations post-fusion de \texttt{Ftree}s sur la forêt.
 \paragraph*{}
-Les fonction merge et sorte sont, contrairement à la programmation instinctive, ittératives. En effet, pour des nombres de villes suffisament grands, des fonctions itératives soulèvent des \texttt{stack overflow}.
+Les fonction merge et split sont, contrairement à la programmation instinctive, ittératives. En effet, pour des nombres de villes suffisament grands, des fonctions itératives soulèvent des \texttt{stack overflow}.
 \subsection{Parcours de tries}
 
 \paragraph*{}Les tries sont optimisées pour avoir un parcours très simple. Il suffit de rechercher à chaque étage de la trie les lettres du mot en entrée et de renvoyer des erreurs si les lettres ne sont pas présentent ou si lorsque le mot est terminé \texttt{is\_word} n'est pas à 1.
@@ -258,6 +258,26 @@ La recherche du caractère à un étage donné de la trie se fait en temps const
 
 \section{Problématiques pratiques de développement : bibliothèques et outils utilisés}
 
+\subsection{Bibliothèque de tests unitaires}
+Une bonne pratique de développement est l'utilisation récurrente de tests unitaires : une fois des fonctions écrites, il s'agit d'écrire une suite de tests sur cette fonction, testant son comportement sur des valeurs d'entrée données, et vérifiant automatiquement la conformité de la sortie. Cela permet tout d'abord de détecter des bogues, l'oubli de cas particuliers, mais aussi, lors de factorisation ou modification de code existant, de vérifier que le nouveau code est toujours conforme.
+
+L'objectif est de pouvoir créer des tests simplement, et de les lancer ensuite de manière automatique. Les bibliothèques existantes sur lesquelles nous nous sommes penchés nous ont semblées à la fois lourdes et compliquées à utiliser. Nous avons donc développé notre propre bibliothèque de tests unitaires, visant à être pleinement utilisable, tout en étant suffisamment minimale pour ne pas avoir à «~débugger les tests~».
+
+Il s'agit d'un simple header, \texttt{minunit.h}\footnote{dans le dossier tests/}, qui, une fois inclus, permet :
+\begin{itemize}
+\item Créer une fonction de test avec \texttt{START\_TEST}, \texttt{END\_TEST}
+\item Dans cette fonction, on fait des \texttt{assert()}, qui testent une valeur (typiquement une comparaison sur une valeur de retour), et renvoient un message d'erreur en cas d'échec.
+\item Dans le corps principal de la fonction, on peut alors lancer les différents tests créés, et récupérer au final le nombre de tests réussis ou échoués, et afficher un résumé de l'ensemble des tests.
+\end{itemize}
+
+Et en bonus, des couleurs !
+
+\subsection{Makefile avec gestion fine des dépendances}
+Un Makefile, en plus de fournir les commandes pour construire automatiquement les binaires, doit pouvoir établir précisément, lors de la modification de quelques fichiers, les binaires objets (\texttt{.o}) à recompiler nécessairement. Pour de gros projets, il serait néfaste de mal gérer ceci, et de recompiler une grosse partie du code pour la modification d'un simple fichier. Si ce projet n'a pas forcément cette envergure, il nous a semblé important d'apprendre comment écrire un Makefile propre, gérant finement les dépendances au sein du projet entier. 
+
+Pour cela, nous nous sommes appuyés sur l'article de Peter Miller (\cite{makefile}), décrivant une méthode propre de construction de Makefiles, à l'inverse des Makefiles récursifs, qu'il montre être totalement inefficients.
+
+Celle-ci consiste en fait à faire générer à \texttt{gcc} la liste des dépendances d'un fichier, et de stocker ça dans un fichier particulier, lui-même étant en dépendance. Make, en chargeant tous ces fichiers, récupère toutes les informations de dépendances, et ne reconstruit que l'exact nécessaire.
 
 \addcontentsline{toc}{section}{Conclusion}
 \section*{Conclusion}
@@ -281,6 +301,13 @@ Toutefois, le programme n'est pas encore optimal. Même si appliquer l'algorithm
   MIT Press,
   3rd edition,
   2009.
+
+\bibitem{makefile}
+  P. Miller,
+  \textit{Recursive Make Considered Harmful},
+  AUUGN Journal of AUUG Inc.,
+  1998.
+
 \end{thebibliography}
 
 \end{document}
