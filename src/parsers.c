@@ -28,46 +28,41 @@ Graph* parse_EdgesDistances(FILE* f) {
   }
   return NULL;
 }
+*/ 
 
-Graph* parse_VerticesCoordinates(FILE* f) {
+Towns* parse_VerticesCoordinates(FILE* f) {
   if(f != NULL) {
     rewind(f);
     int nodes_nb;
-    fscanf(f, "%d!\n", &nodes_nb);
+    int found;
+    found = fscanf(f, "%d!\n", &nodes_nb);
+    if(found != 1) return NULL;
     
-    Graph* g = graph_newWithNodes(nodes_nb+1);
-    Vector* v = vector_newWithSize(nodes_nb+1);
-    vector_fill(v, nodes_nb+1, (Generic)NULL);
+    Towns* t = towns_new();
 
-    int i;
-    size_t n;
-    char* pos;
-    int ret;
-    while((ret = fscanf(f, "%d: ", &i)) && (ret != EOF)) {
-      getline(&pos, &n, f);
-      vector_set(v, i, (Generic)(void*)pos);
-    }
-
-    int j;
-    for(i=0; i < nodes_nb+1; i++) {
-      for(j=i+1; j < nodes_nb+1; j++) {
-	  float x1, y1, x2, y2;
-	  sscanf(vector_get(v, i).p, "%f; %f!", &x1, &y1);
-	  sscanf(vector_get(v, j).p, "%f; %f!", &x2, &y2);
-	  graph_setWeight(g, i, j, dist(x1, x2, y1, y2));
+    int id;
+    float x, y;
+    char name[20];
+    while((found = fscanf(f, "%d: %f; %f!\n", &id, &x, &y)) && (found != EOF)) {
+      if(found != 3) {
+	printf("-> found : %d\n", found);
+	free(t);
+	return NULL;
       }
+
+      snprintf(name, 20, "%d", id);
+      vector_set(t->names, id-1, (Generic)(void*)strdup(name));
+      vector_set(t->x, id-1, (Generic)x);
+      vector_set(t->y, id-1, (Generic)y);
+
+      t->nb++;
     }
 
-    for(i=0; i < nodes_nb+1; i++)
-      free(vector_get(v, i).p);
-
-    vector_free(v);
-
-    return g;	
+    return t;
   }
   return NULL;
 }
-*/
+
 Trie* parse_Towns(FILE* f) {
   Trie* my_towns = trie_new();
 
@@ -99,3 +94,4 @@ Trie* parse_Towns(FILE* f) {
 
   return my_towns;
 }
+

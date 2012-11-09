@@ -44,7 +44,29 @@ void load_edgelist(char** args, Env* env) {
 }
 
 void load_coordinates(char** args, Env* env) {
-  printf("Not implemented. Sorry :(.\n");
+  if(args[1] == NULL) {
+    printf("Usage : \"load_coordinates <firename>\" where <filename> is the file \
+containing the list of towns with their coordinates\n");
+    return;
+  }
+
+  char* filename = args[1];
+  FILE* towns_f;
+  if((towns_f = fopen(filename, "r")) == NULL) {
+    printf("Error: Unable to open %s for reading\n", filename);
+  } else {
+    Towns* t = parse_VerticesCoordinates(towns_f);
+    if(t == NULL) {
+      printf("Syntax error\n");
+      return;
+    }
+
+    if(env->cur_towns != NULL) {
+      towns_free(env->cur_towns);
+    }
+    env->cur_towns = t;
+    fclose(towns_f);
+  }
 }
 
 void add(char** args, Env* env) {
