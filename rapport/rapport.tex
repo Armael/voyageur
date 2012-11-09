@@ -94,29 +94,28 @@ Pour améliorer les performances, nous voulons pouvoir vérifier que deux sommet
 \medskip
 
 \begin{algorithm}[H]
-\SetAlgoLined
-\KwData{La chaine de carractère $(c_{i})_{i \in [0,n-1]}$ correspondant au nom de la ville recherchée et la trie contenant les données}
-\KwResult{Les coordonnées de cette ville ou une erreur si elle n'est pas présente}
-\eIf{La lettre $c_{0}$ est présente à cette étage de la trie}{
-	\eIf{La chaine de caractère ne contient qu'un seul caractère}{
-		\eIf{La trie est terminale à cet endroit}{
-			Renvoyer les coordonnées\;
-		}{
-			Renvoyer une erreur\;
-		}
-	}{
-		Appliquer cet algorithme à la trie fille et à la chaine $(c_{i})_{i \in [1,n-1]}$\;
-	}
-}{
-			Renvoyer une erreur\;
-}
-}
+  \SetAlgoLined
+  \KwData{La chaine de carractère $(c_i)_{i \in [0,n-1]}$ correspondant au nom de la ville recherchée et la trie contenant les données}
+  \KwResult{Les coordonnées de cette ville ou une erreur si elle n'est pas présente}
+  \eIf{La lettre $c_0$ est présente à cette étage de la trie} {
+    \eIf{La chaine de caractère ne contient qu'un seul caractère} {
+      \eIf{La trie est terminale à cet endroit} {
+        Renvoyer les coordonnées\;
+      }{
+        Renvoyer une erreur\;
+      }
+    }{
+      Appliquer cet algorithme à la trie fille et à la chaine $(c_i)_{i \in [1,n-1]}$ \;
+    }
+  }{
+    Renvoyer une erreur\;
+  }
 \caption{Algorithme de parcours de trie}
 \end{algorithm}
 
 \medskip
 
-La recherche du caractère à un étage donné de la trie ce fait en temps constant donc la compléxité est en $\Theta$(longueur de la chaine de caractères).
+La recherche du caractère à un étage donné de la trie se fait en temps constant donc la complexité est en $\Theta$(longueur de la chaine de caractères).
 
 \section{Les structures de données}
 \label{se:structures}
