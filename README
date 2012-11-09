@@ -32,6 +32,13 @@ La liste des commandes est disponible en tapant 'help' avec une courte
 description. Une description plus complète pour une commande donnée
 est accessible en tapant 'help <commande>'.
 
+Un fichier selon la deuxième syntaxe (villes numérotées avec
+coordonnées) est disponible : il s'agit de
+data/testVerticesCoordinates.txt.
+
+La première syntaxe avec listes d'arètes n'est pas gérée (elle l'était
+avec l'ancienne structure de graphe).
+
 Deux bases de données sont disponibles dans le sous-dossier data/ :
 - Towns.txt, contenant l'ensemble des villes, villages, hameaux de
 France, soit environ 100000 villes (moins, en comptant les doublons)
