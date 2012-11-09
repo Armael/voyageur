@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath, amsthm, amssymb}
 \usepackage[lined,boxed]{algorithm2e}
+\usepackage{fullpage}
 
 \sloppy
 
@@ -40,8 +41,8 @@ Le cœur du projet repose sur l'utilisation d'un algorithme glouton, nommé ici 
 
 \begin{algorithm}[H]
   \SetAlgoLined
-  \KwData{Le graphe $G$ des villes et sa fonction de poids $w$}
-  \KwResult{\textit{Tournée} pour le voyageur du commerce (liste de villes)}
+  \Donnees{Le graphe $G$ des villes et sa fonction de poids $w$}
+  \Res{\textit{Tournée} pour le voyageur du commerce (liste de villes)}
   $T := $ un arbre couvrant minimal de $G$\;
   $L := $ parcours\_préfixe($T$)\;
   retourner $L$\;
@@ -66,12 +67,12 @@ Formellement cela s'écrit :
 
 \begin{algorithm}[H]
 \SetAlgoLined
-\KwData{Le graphe $G=(V, E)$ des villes et sa fonction de poids $w$}
-\KwResult{$T$, un arbre couvrant minimal du graphe}
+\Donnees{Le graphe $G=(V, E)$ des villes et sa fonction de poids $w$}
+\Res{$T$, un arbre couvrant minimal du graphe}
 Trier $E$ par ordre croissant de poids selon $w$\;
 Construire la forêt $F$, composée des arbres associés aux sommets\;
-\ForEach{$e=(v1, v2)$ $\in$ $E$ $trié$}{
-  \eIf{$v1$ et $v2$ appartiennent à un arbre différent}{
+\PourTous{$e=(v1, v2)$ $\in$ $E$ $trié$}{
+  \eSi{$v1$ et $v2$ appartiennent à un arbre différent}{
     Lier $v1$ et $v2$, et donc les arbres qui les contiennent\;
   }{
     Passer à l'arête suivante\;
@@ -231,17 +232,17 @@ Une fois la liste des arêtes triées et la forêt créés, il suffit d'applique
 
 \begin{algorithm}[H]
   \SetAlgoLined
-  \KwData{La chaine de carractère $(c_i)_{i \in [0,n-1]}$ correspondant au nom de la ville recherchée et la trie contenant les données}
-  \KwResult{Les coordonnées de cette ville ou une erreur si elle n'est pas présente}
-  \eIf{La lettre $c_0$ est présente à cette étage de la trie} {
-    \eIf{La chaine de caractère ne contient qu'un seul caractère} {
-      \eIf{La trie est terminale à cet endroit} {
+  \Donnees{La chaîne de caractère $(c_i)_{i \in [0,n-1]}$ correspondant au nom de la ville recherchée et la trie contenant les données}
+  \Res{Les coordonnées de cette ville ou une erreur si elle n'est pas présente}
+  \eSi{La lettre $c_0$ est présente à cette étage de la trie} {
+    \eSi{La chaine de caractère ne contient qu'un seul caractère} {
+      \eSi{La trie est terminale à cet endroit} {
         Renvoyer les coordonnées\;
       }{
         Renvoyer une erreur\;
       }
     }{
-      Appliquer cet algorithme à la trie fille et à la chaine $(c_i)_{i \in [1,n-1]}$ \;
+      Appliquer cet algorithme à la trie fille et à la chaîne $(c_i)_{i \in [1,n-1]}$ \;
     }
   }{
     Renvoyer une erreur\;
