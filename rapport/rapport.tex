@@ -24,7 +24,7 @@
 \section*{Introduction}
 
 \paragraph*{}
-Le « Voyageur du commerce » est un problème algorithmique classique, pour lequel de nombreuses solutions approchées existent , bien que la résolution exacte soit difficile. Celui-ci peut se modéliser par un voyageur de commerce possédant une liste de villes à visiter pour vendre ses produits, et qui cherche à minimiser le temps qu’il passe sur la route. Connaissant la liste des villes et les distances entres elles, on veut alors trouver l’ordre dans lequel les parcourir pour que la distance totale parcourue soit minimale. Ce problème est NP-complet, il nous est donc impossible de trouver un algorithme trouvant une solution optimale et fonctionnant en un temps raisonnable.
+Le «~Voyageur du commerce~» est un problème algorithmique classique, pour lequel de nombreuses solutions approchées existent, bien que la résolution exacte soit difficile. Celui-ci peut se modéliser par un voyageur de commerce possédant une liste de villes à visiter pour vendre ses produits, et qui cherche à minimiser le temps qu’il passe sur la route. Connaissant la liste des villes et les distances entres elles, on veut alors trouver l’ordre dans lequel les parcourir pour que la distance totale parcourue soit minimale. Ce problème est NP-complet, il nous est donc impossible de trouver un algorithme trouvant une solution optimale et fonctionnant en un temps raisonnable.
 \paragraph*{}
 Dans le cadre du projet~1 en C, nous avons alors implémenté en binôme un algorithme de résolution approchée de ce problème, ainsi qu’une interface utilisateur permettant de sélectionner aisément les villes à parcourir par le voyageur dans une base de donnée.
 L’algorithme choisi repose sur le parcours d'un arbre couvrant minimal pour le graphe des villes, construit à l'aide de l'algorithme de Kruskal. Il nous a fallu ensuite implémenter une base de données stockant des villes à parcourir par le voyageur et une interface utilisateur.
@@ -54,7 +54,7 @@ Le cœur du projet repose sur l'utilisation d'un algorithme glouton, nommé ici 
 \item La structure d'arbre doit pouvoir se parcourir efficacement. Une implémentation telle que réalisée en TP semble convenir pour le moment (un arbre est un nœud racine et des pointeurs vers les fils), adaptée pour gérer un nombre quelconque de fils.
 \end{itemize}
 
-\subsection{Algorithmes de Kruskal}
+\subsection{Algorithme de Kruskal}
 
 \paragraph*{} L'algorithme de \emph{Kruskal} permet de construire un arbre couvrant minimal pour un graphe donné, à savoir un arbre composé de tous les sommets du graphe, et de poids minimal. Il commence par trier toutes les arêtes par ordre croissant de poids, puis construit une forêt qui est initialement composée d'arbres à un nœud, correspondant aux sommets du graphe. \\
 Il s'agit ensuite de lier les arbres en parcourant les arêtes (triées) : si les deux sommets que lie l'arête appartiennent à des arbres différents dans la forêt, on relie ces deux arbres par ces sommets; sinon on passe à l'arête suivante.
@@ -98,18 +98,19 @@ Nous aurions pu implémenter une table de hachage générique, cependant ici, co
 \section{Les structures de données}
 \label{se:structures}
 
-Une fois les algorithmes choisis et qu'a été définie la manière précise dont ils ont besoin d'utiliser les structures sous-jacentes, il faut effectivement les choisir et les implémenter. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement resservir pour d'autres projets. Cependant, pour l'algorithme de \emph{Kruskal} nous avons développé des structures spécifiques.
+Une fois les algorithmes choisis et qu'a été définie la manière précise dont ils ont besoin d'utiliser les structures sous-jacentes, il faut effectivement les choisir et les implémenter. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement resservir pour d'autres projets. Cependant, pour l'algorithme de \emph{Kruskal} nous avons développé des structures plus spécifiques.
 
-\subsection{La structure Generic}
+\subsection{Le type Generic}
 
-\begin{verbatim}
-typedef union {
-  void* p;
-  int i;
-  float f;
-  double d;
-} Generic;
-\end{verbatim}
+Lorsque l'on cherche à implémenter des bibliothèques génériques en C, un problème qui se pose est celui de la généricité. Comment implémenter une structure pouvant contenir n'importe quel type de données ? Il ne semble pas avoir solution magique en C, mais nous pensons avoir trouvé une solution assez satisfaisante.
+
+Après lecture du code de nombreuses bibliothèques contenant des structures de données «~génériques~» implémentées en C, il apparaît que ce qui est couramment fait est de stocker dans la structure un type \texttt{void*}. En effet, celui-ci permet de représenter tout type de pointeur, puisque l'on peut «~caster~» de manière transparente tout pointeur en \texttt{void*} et inversement (c'est ce qu'utilise la fonction \texttt{malloc()} par exemple, qui retourne un \texttt{void*}).
+
+Cependant, lorsque l'on veut stocker un type non pointé, c'est quasiment impossible : soit l'on alloue de la mémoire pour le stocker (ce qui est très pénible : être obligé d'allouer de la mémoire pour un \texttt{int}, et garder un pointeur dessus, qui est de la même taille (ou plus) que la donnée pointée), soit l'on «~caste~» directement le \texttt{int} en \texttt{void*}. Ceci est en fait totalement non-sécure, rien ne garantissant que les types aient la même taille en mémoire (et en effet, ce n'est par exemple pas le cas en amd64).
+
+Nous avons alors abouti à la solution suivante : on utilise un type, nommé \texttt{Generic}\footnote{lib/generic.h}, et qu'utiliseront nos structures de données. Celui-ci est en fait une \texttt{union} des types scalaires usuels, et d'un \texttt{void*} pour représenter les pointeurs.
+
+Pour «~convertir~» une variable donnée \texttt{v} (supposons là de type \texttt{int} ici) en \texttt{Generic}, il suffit de faire \texttt{g = (Generic)v}. À l'inverse, un \texttt{Generic} étant donné, accéder à la variable \texttt{v} de type \texttt{int} s'écrit \texttt{g.i}\footnote{On note qu'il n'y a pas de sécurité de types : il faut savoir à l'avance ce qui a été stocké dans un \texttt{Generic} car l'information de typage a été perdue.}. 
 
 \subsection{Les vector}
 
@@ -125,7 +126,7 @@ typedef struct Vector {
 
 Le graphe n'est pas représenté par une structure usuelle de graphe avec une liste de sommets et d'arêtes. En effet, chaque sommet du graphe est lié à chaque autre il est donc inutile et lourd de garder en mémoire une structure de graphe avec des arêtes.
 
-\subsection{Arbres non-enracinée}
+\subsection{Arbres non-enracinés}
 
 Les arbres non-enracinés (free trees en anglais, d'où le nom Ftree) permettent de lier d'unir deux arbres par deux de leur noeuds sans avoir à se préoccuper de notion de racine à déplacer, chaque noeud de l'arbre représente l'arbre. Ceci nous permet de respecter les contraintes en compléxité. 
 
