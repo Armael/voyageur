@@ -26,6 +26,20 @@ La liste des commandes est disponible en tapant 'help' avec une courte
 description. Une description plus complète pour une commande donnée
 est accessible en tapant 'help <commande>'.
 
+Deux bases de données sont disponibles dans le sous-dossier data/ :
+- Towns.txt, contenant l'ensemble des villes, villages, hameaux de
+France, soit environ 100000 villes (moins, en comptant les doublons)
+- BigCities.txt, ne référençant que les grandes villes de France,
+soit environ 900 villes.
+
+Une fois une base de données chargée, il est possible d'ajouter
+manuellement au graphe les villes à prendre en compte pour la
+résolution, ou bien d'utiliser la commande 'add_from_file' qui ajoute
+les villes d'après une liste de noms.
+Plusieurs listes de noms (tirées au hasard) sont disponibles,
+également dans le dossier data/ : elles sont toutes de la forme
+names_listX où X est le nombre de villes dans la liste.
+
 Pour nettoyer le projet des fichiers de compilation :
 
      make clean
