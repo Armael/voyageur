@@ -93,7 +93,7 @@ Pour des raisons de compléxité, nous voulons pouvoir vérifier que deux sommet
 \section{Les structures de donées}
 \label{se:structures}
 
-Une fois les algorithmes choisis (TSP nous était imposé et Kruskal fortement imposé), il nous fallait choisir les structures de données adaptées. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement reservir pour d'autes projets. Cependant, pour l'algorithme de kruskal nous avons développé des structures spécifiques.
+Une fois les algorithmes choisis (TSP nous était imposé et Kruskal fortement imposé), il nous fallait choisir les structures de données adaptées. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement reservir pour d'autes projets. Cependant, pour l'algorithme de Kruskal nous avons développé des structures spécifiques.
 
 \subsection{La structure Generic}
 
@@ -121,6 +121,8 @@ Le graphe n'est pas représenter par une structure usuelle de graphe avec une li
 
 \subsection{Arbres non-enracinée}
 
+Les arbres non-enracinés permettent de lier d'unir deux arbres par deux de leur noeuds sans avoir à se préoccuper de notion de racine à déplacer, chaque noeud de l'arbre représente l'arbre. Ceci nous permet de respecter les contraintes en compléxité. 
+
 \begin{verbatim}
 typedef struct ftree {
   Generic data;
@@ -130,6 +132,8 @@ typedef struct ftree {
 \end{verbatim}
 
 \subsection{Structures utilisées dans l'algorithme de Kruskal}
+
+Les structures liées à l'algorithmes de Kruskal sont particulières car nous ne les avons pas développé de manière à pouvoir reservir, la liste d'arêtes n'est en rien générale car elle contient des arbres non-enracinés ce qui est très spécifique, et les fonctions sur la structure des forêt sont spécifiquent à l'algorithme de Kruskal.
 
 \subsubsection{Listes d'arêtes}
 
