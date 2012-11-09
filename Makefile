@@ -19,7 +19,7 @@ DEP_TEST := ${OBJ_TEST:.o=.dep}
 CC := gcc
 CFLAGS := -Wall -Wextra -Wunused -Wconversion -Wno-sign-conversion
 CFLAGS += -Ilib -Itests
-CFLAGS += -O0 -g
+CFLAGS += $(DEBUGFLAGS)
 
 .PHONY: all build-tests tests clean mproper
 
