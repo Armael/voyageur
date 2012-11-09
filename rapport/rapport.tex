@@ -269,6 +269,11 @@ Il s'agit d'un simple header, \texttt{minunit.h}\footnote{dans le dossier tests/
 
 Et en bonus, des couleurs !
 
+\subsection{Makefile avec gestion fine des dépendances}
+Un Makefile, en plus de fournir les commandes pour construire automatiquement les binaires, doit pouvoir établir précisément, lors de la modification de quelques fichiers, les binaires objets (\texttt{.o}) à recompiler nécessairement. Pour de gros projets, il serait néfaste de mal gérer ceci, et de recompiler une grosse partie du code pour la modification d'un simple fichier. Si ce projet n'a pas forcément cette envergure, il nous a semblé important d'apprendre comment écrire un Makefile propre, gérant finement les dépendances au sein du projet entier. 
+
+Pour cela, nous nous sommes appuyés sur l'article de Peter Miller (\cite{makefile}), décrivant une méthode propre de construction de Makefiles, à l'inverse des Makefiles récursifs, qu'il montre être totalement inefficients.
+
 \addcontentsline{toc}{section}{Conclusion}
 \section*{Conclusion}
 \paragraph*{}
@@ -291,6 +296,13 @@ Toutefois, le programme n'est pas encore optimal. Même si appliquer l'algorithm
   MIT Press,
   3rd edition,
   2009.
+
+\bibitem{makefile}
+  P. Miller,
+  \textit{Recursive Make Considered Harmful},
+  AUUGN Journal of AUUG Inc.,
+  1998.
+
 \end{thebibliography}
 
 \end{document}
