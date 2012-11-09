@@ -83,39 +83,17 @@ Construire la forêt $F$, composée des arbres associés aux sommets\;
 
 Pour améliorer les performances, nous voulons pouvoir vérifier que deux sommets n'appartiennent pas au même arbre et lier deux arbres en temps constant. Cela entraîne deux contraintes :
 \begin{itemize}
-\item Les arbres doivent être non-enracinés pour pouvoir les fusionner aisément.
+\item Les arbres doivent en fait être non-enracinés pour pouvoir les fusionner aisément.
 \item La forêt doit avoir une structure permettant la vérification instantanée de l'appartenance à un arbre.
 \end{itemize}
 
-\subsection{Parcours de tries}
+\subsection{Base de données}
 
-\paragraph*{}Les tries dont nous détaillerons l'implémentation dans la Section~\ref{se:structures} nous ont semblé être adaptées pour gérer des nombreuses villes et leur coordonnées. En effet, leur structure sous forme de dictionnaire permet de retrouver rapidement une ville comme nous allons le constater.
+\paragraph*{}
+En parallèle de l'algorithme principal, il était nécessaire d'implémenter une base de données performante, utilisée pour stocker des villes et leurs coordonnées. Les opérations recherchées sont les opérations classiques : ajouter une correspondance (\texttt{nom} $\rightarrow$ \texttt{(x, y)}) à la table, et trouver les coordonnées \texttt{(x, y)} connaissant le nom.
 
-\medskip
-
-\begin{algorithm}[H]
-  \SetAlgoLined
-  \KwData{La chaine de carractère $(c_i)_{i \in [0,n-1]}$ correspondant au nom de la ville recherchée et la trie contenant les données}
-  \KwResult{Les coordonnées de cette ville ou une erreur si elle n'est pas présente}
-  \eIf{La lettre $c_0$ est présente à cette étage de la trie} {
-    \eIf{La chaine de caractère ne contient qu'un seul caractère} {
-      \eIf{La trie est terminale à cet endroit} {
-        Renvoyer les coordonnées\;
-      }{
-        Renvoyer une erreur\;
-      }
-    }{
-      Appliquer cet algorithme à la trie fille et à la chaine $(c_i)_{i \in [1,n-1]}$ \;
-    }
-  }{
-    Renvoyer une erreur\;
-  }
-\caption{Algorithme de parcours de trie}
-\end{algorithm}
-
-\medskip
-
-La recherche du caractère à un étage donné de la trie se fait en temps constant donc la complexité est en $\Theta$(longueur de la chaine de caractères).
+\paragraph*{}
+Nous aurions pu implémenter une table de hachage générique, cependant ici, connaître la nature des clés (il s'agit de chaînes de caractères) nous permettra, lors du choix de la structure, d'optimiser grandement.
 
 \section{Les structures de données}
 \label{se:structures}
@@ -223,6 +201,32 @@ Cela est fait de manière récursive par la fonction \texttt{prefixTravel\_}. Le
 \subsection{Algorithmes de Kruskal}
 
 \subsection{Parcours de tries}
+
+\medskip
+
+\begin{algorithm}[H]
+  \SetAlgoLined
+  \KwData{La chaine de carractère $(c_i)_{i \in [0,n-1]}$ correspondant au nom de la ville recherchée et la trie contenant les données}
+  \KwResult{Les coordonnées de cette ville ou une erreur si elle n'est pas présente}
+  \eIf{La lettre $c_0$ est présente à cette étage de la trie} {
+    \eIf{La chaine de caractère ne contient qu'un seul caractère} {
+      \eIf{La trie est terminale à cet endroit} {
+        Renvoyer les coordonnées\;
+      }{
+        Renvoyer une erreur\;
+      }
+    }{
+      Appliquer cet algorithme à la trie fille et à la chaine $(c_i)_{i \in [1,n-1]}$ \;
+    }
+  }{
+    Renvoyer une erreur\;
+  }
+\caption{Algorithme de parcours de trie}
+\end{algorithm}
+
+\medskip
+
+La recherche du caractère à un étage donné de la trie se fait en temps constant donc la complexité est en $\Theta$(longueur de la chaine de caractères).
 
 \section{Problématiques pratiques de développement : bibliothèques et outils utilisés}
 
