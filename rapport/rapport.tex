@@ -100,7 +100,7 @@ Nous aurions pu implémenter une table de hachage générique, cependant ici, co
 
 Une fois les algorithmes choisis et qu'a été définie la manière précise dont ils ont besoin d'utiliser les structures sous-jacentes, il faut effectivement les choisir et les implémenter. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement resservir pour d'autres projets. Cependant, pour l'algorithme de \emph{Kruskal} nous avons développé des structures plus spécifiques.
 
-\subsection{Le type Generic}
+\subsection{Le type \texttt{Generic}}
 
 Lorsque l'on cherche à implémenter des bibliothèques génériques en C, un problème qui se pose est celui de la généricité. Comment implémenter une structure pouvant contenir n'importe quel type de données ? Il ne semble pas avoir solution magique en C, mais nous pensons avoir trouvé une solution assez satisfaisante.
 
@@ -112,15 +112,12 @@ Nous avons alors abouti à la solution suivante : on utilise un type, nommé \te
 
 Pour «~convertir~» une variable donnée \texttt{v} (supposons là de type \texttt{int} ici) en \texttt{Generic}, il suffit de faire \texttt{g = (Generic)v}. À l'inverse, un \texttt{Generic} étant donné, accéder à la variable \texttt{v} de type \texttt{int} s'écrit \texttt{g.i}\footnote{On note qu'il n'y a pas de sécurité de types : il faut savoir à l'avance ce qui a été stocké dans un \texttt{Generic} car l'information de typage a été perdue.}. 
 
-\subsection{Les vector}
+\subsection{Les \texttt{Vector}s}
+Après avoir détaillé les algorithmes, il nous est apparu que nous allions avoir besoin bien entendu de tableaux statiques, mais aussi qu'il serait commode, pour plus de souplesse, de pouvoir faire grandir ces tableaux dynamiquement, à la demande.
 
+Nous avons donc implémenté ce que nous appelons les \texttt{Vector}s\footnote{lib/vector.h} : il s'agit de tableaux standard, avec en plus la possibilité d'adresser des éléments à un indice arbitrairement élevé, le tableau grandissant à la demande. La politique d'expansion est de doubler la taille du tableau dès que plus de mémoire est nécessaire : ceci permet d'avoir un coût d'insertion d'un nouvel élément en $O(1)$ amorti (voir \cite{cormen} p. 463, 17-4).
 
-\begin{verbatim}
-typedef struct Vector {
-  Generic* content; /* Generic array */
-  int size;
-} Vector;
-\end{verbatim}
+Ils se sont révélés très utiles, sont utilisées à de multiples endroits du projet et apportent une grande flexibilité pour de bonnes performances.
 
 \subsection{Le graphe}
 
@@ -258,7 +255,14 @@ Nous avons rencontrer des difficultées de compléxité qui empêchaient d'appli
 Toutefois, le programme n'est pas encore optimal. Même si appliquer l'algorithme à 3000 villes ne prend plus que 12 seconde, il reste difficile d'atteindre 10 000 villes. La structure de donnée stockant les arêtes peut être la source de cette faiblesse. Une amélioration possible serait de remplacer la structure de liste par un tableau qui permettrait de trier sur place les arêtes.
 
 
+\begin{thebibliography}{00}
 
-
+\bibitem{cormen}
+  T. Cormen, C. Leiserson, R. Rivest, C. Stein,
+  \textit{Introduction to Algorithms},
+  MIT Press,
+  3rd edition,
+  2009.
+\end{thebibliography}
 
 \end{document}
