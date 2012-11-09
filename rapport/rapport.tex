@@ -177,6 +177,8 @@ La forêt est ici codée un vector, ce qui permet d'accéder instantanément à 
 
 \subsection{Les tries}
 
+Une trie est un arbre dont la racine n'est pas indexé et dont chaque noeud est indéxé par un caractère. Cette structure permet de rechercher un mot en un temps linéaire en la taille de ce mot, car chaque chemin dans cet arbre représente un mot ou un préfixe. Ainsi pour rechercher un mot il suffit de chercher chacune des lettres qui le compose à chaque étage.
+
 \begin{verbatim}
 struct trie {
   float coord_x;
@@ -191,6 +193,8 @@ struct letter {
   struct letter *tail;
 };
 \end{verbatim}
+
+Notre structure de trie est construite à l'aide d'une sous structure, letter, qui représente la liste des lettres présente à un étage de la trie et la trie qui découle de chacune. \texttt{is\_word} permet de savoir à chaque étape de la trie si on se trouve à la fin d'un mot et \texttt{coord\_x}, \texttt{coord\_y} représentent les coordonnées de la ville dont c'est le nom.
 
 \section{Implémentation des algorithmes}
 
@@ -237,7 +241,7 @@ La recherche du caractère à un étage donné de la trie se fait en temps const
 \paragraph*{}
 Nous obtenons donc à l'aide de l'algorithme de Kruskal et de l'algorithme TSP, une résolution du problème du voyageur de commerce qui, même si elle n'est pas optimale, renvoie des résultats acceptable. En effet, les tests que nous avons effectuer nous ont permis de constater que les résultats obtenus ne contenaient pas de parcours absurdes dont il est évident qu'ils sont bien trop long.
 \paragraph*{}
-La structure de donnée crée à l'aide des tries permet de charger des milliers de villes (l'ensemble des villes française) en quelque seconde et de ressortir celle demandée en un temps aussi acceptable.
+La structure de donnée crée à l'aide des tries permet de charger des milliers de villes (l'ensemble des villes française) en quelque seconde et de ressortir celle demandée presque instantanément.
 \paragraph*{}
 L'interface utilisateur utilisant les convention UNIX permet de chargés differentes bases de données (uniquement les grandes villes française ou aussi les petites communes), de rentrer une liste de ville à parcourir à la main ou à l'aide d'un fichier texte.
 \paragraph*{}
