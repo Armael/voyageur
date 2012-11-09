@@ -135,6 +135,7 @@ typedef union {
 
 \subsection{Les vector}
 
+
 \begin{verbatim}
 typedef struct Vector {
   Generic* content; /* Generic array */
@@ -148,7 +149,7 @@ Le graphe n'est pas représenté par une structure usuelle de graphe avec une li
 
 \subsection{Arbres non-enracinée}
 
-Les arbres non-enracinés permettent de lier d'unir deux arbres par deux de leur noeuds sans avoir à se préoccuper de notion de racine à déplacer, chaque noeud de l'arbre représente l'arbre. Ceci nous permet de respecter les contraintes en compléxité. 
+Les arbres non-enracinés (free trees en anglais, d'où le nom Ftree) permettent de lier d'unir deux arbres par deux de leur noeuds sans avoir à se préoccuper de notion de racine à déplacer, chaque noeud de l'arbre représente l'arbre. Ceci nous permet de respecter les contraintes en compléxité. 
 
 \begin{verbatim}
 typedef struct ftree {
@@ -158,11 +159,15 @@ typedef struct ftree {
 } Ftree;
 \end{verbatim}
 
+La structure ne comprend pas le concept de fils mais de voisins ce qui évite d'avoir à choisir une différence de hauteur dans l'arbre.
+
 \subsection{Structures utilisées dans l'algorithme de Kruskal}
 
 Les structures liées à l'algorithmes de Kruskal sont particulières car nous ne les avons pas développé de manière à pouvoir reservir, la liste d'arêtes n'est en rien générale car elle contient des arbres non-enracinés ce qui est très spécifique, et les fonctions sur la structure des forêt sont spécifiquent à l'algorithme de Kruskal.
 
 \subsubsection{Listes d'arêtes}
+
+L'algorithme de Kruskal nécessite de trier les arêtes, il nous fallait donc une structure pour contenir ces arêtes. Nous avons choisi d'utiliser une liste afin de pouvoir par la suite nous servi de l'agorithme tri-fusion.
 
 \begin{verbatim}
 typedef struct kedge {
@@ -178,6 +183,8 @@ typedef struct kedge {
 } Kedge;
 \end{verbatim}
 
+Chaque arête contient son poids, les numéros des sommets qu'elle lie et des pointeur vers les arbres qui leur sont associés. Cela permet de lier les arbres en temps constant car on accède directement au bon noeud.
+
 \subsubsection{Forêts}
 
 \begin{verbatim}
@@ -186,6 +193,8 @@ typedef struct forest {
   int treesNb;
 } Forest;
 \end{verbatim}
+
+La forêt est ici codée un vector, ce qui permet d'accéder instantanément à l'arbre associée à un sommet du graphe à l'aide des indices dans les arêtes. Alors que l'algorithme de Kruskal avance, le nombre d'arbres identiques augmente et les éléments d'indices appartenant au même arbre vont être exactement le même noeud. Ce qui permet de comparer rapidement si deux sommets appartiennent au même arbre. Toutefois, la compléxité pour répendre ce noeud dans le vecteur est linéaire ce qui augmente la compléxité totale de l'algorithme de Kruskal.
 
 \subsection{Les tries}
 
