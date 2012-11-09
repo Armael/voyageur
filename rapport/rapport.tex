@@ -107,7 +107,10 @@ Une fois les algorithmes choisis (TSP nous était imposé et Kruskal fortement i
 \section{Implémentation des algorithmes}
 
 \subsection{TSP}
+L'algorithme \emph{TSP} ne fait en lui même pas grand chose : il s'agit d'appeler \emph{Kruskal}, puis de faire un parcours préfixe du \texttt{Ftree*} obtenu.
 
+\paragraph*{}
+Cela est fait de manière récursive par la fonction \texttt{prefixTravel_}. Le parcours d'un \texttt{Ftree*} est presque naturel, il faut simplement prendre garde de passer en argument, lors de l'appel récursif, l'adresse du nœud duquel on vient, celui-ci étant également voisin du nouveau nœud sur lequel on appelle.
 \subsection{Algorithmes de Kruskal}
 
 \subsection{Parcours de tries}
