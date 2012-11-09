@@ -79,10 +79,19 @@ Trie* parse_Towns(FILE* f) {
     while(getline(&line, &n, f) != -1) {
       strtok(line, ":");
       char* split = strtok(NULL, ":");
+      if(split == NULL) {
+	trie_free(my_towns);
+	return NULL;
+      }
       split[-1] = '\0'; /* Élimination du ':' */
       
       float x, y;
-      sscanf(split, " %f; %f!", &x, &y);
+      int found;
+      found = sscanf(split, " %f; %f!", &x, &y);
+      if(found != 2) {
+	trie_free(my_towns);
+	return NULL;
+      }
       my_towns = trie_addTown(my_towns, line, x, y);
     }
     free(line);

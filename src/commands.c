@@ -25,18 +25,26 @@ containing the database of towns with their coordinates\n");
   if((towns_db_f = fopen(filename, "r")) == NULL) {
     printf("Error: Unable to open %s for reading\n", filename);
   } else {
+    Trie* t = parse_Towns(towns_db_f);
+    if(t == NULL) {
+      printf("Syntax error\n");
+      return;
+    }
+
     if(env->towns != NULL) {
       trie_free(env->towns);
     }
-    env->towns = parse_Towns(towns_db_f);
+    env->towns = t;
     fclose(towns_db_f);
   }
 }
 
 void load_edgelist(char** args, Env* env) {
+  printf("Not implemented. Sorry :(.\n");
 }
 
 void load_coordinates(char** args, Env* env) {
+  printf("Not implemented. Sorry :(.\n");
 }
 
 void add(char** args, Env* env) {
