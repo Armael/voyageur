@@ -274,6 +274,8 @@ Un Makefile, en plus de fournir les commandes pour construire automatiquement le
 
 Pour cela, nous nous sommes appuyés sur l'article de Peter Miller (\cite{makefile}), décrivant une méthode propre de construction de Makefiles, à l'inverse des Makefiles récursifs, qu'il montre être totalement inefficients.
 
+Celle-ci consiste en fait à faire générer à \texttt{gcc} la liste des dépendances d'un fichier, et de stocker ça dans un fichier particulier, lui-même étant en dépendance. Make, en chargeant tous ces fichiers, récupère toutes les informations de dépendances, et ne reconstruit que l'exact nécessaire.
+
 \addcontentsline{toc}{section}{Conclusion}
 \section*{Conclusion}
 \paragraph*{}
