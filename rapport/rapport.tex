@@ -84,7 +84,7 @@ Construire la forêt $F$, composée des arbres associés aux sommets\;
 Pour améliorer les performances, nous voulons pouvoir vérifier que deux sommets n'appartiennent pas au même arbre et lier deux arbres en temps constant. Cela entraîne deux contraintes :
 \begin{itemize}
 \item Les arbres doivent en fait être non-enracinés pour pouvoir les fusionner aisément.
-\item La forêt doit avoir une structure permettant la vérification instantanée de l'appartenance à un arbre.
+\item La forêt doit permettre la vérification instantanée de l'appartenance à un arbre.
 \end{itemize}
 
 \subsection{Base de données}
@@ -121,35 +121,55 @@ Ils se sont révélés très utiles, sont utilisées à de multiples endroits du
 
 \subsection{Le graphe}
 
-Le graphe n'est pas représenté par une structure usuelle de graphe avec une liste de sommets et d'arêtes. En effet, chaque sommet du graphe est lié à chaque autre il est donc inutile et lourd de garder en mémoire une structure de graphe avec des arêtes.
+La description même de l'algorithme reposant sur la notion de graphe, nous avions commencé par implémenter une bibliothèque de manipulation de graphes, tout d'abord sous la forme de listes d'arètes (contenant les poids). Voyant que la taille du graphe en mémoire explosait pour un nombre un peu grand de villes (typiquement quelques milliers), nous avons changé notre implémentation pour une représentation avec matrice de poids. Celle-ci économise en effet toute la mémoire prise par les pointeurs de chaînage. Le gain en mémoire fut substantiel, divisant par plus de 2 la consommation mémoire. Celle-ci restait cependant importante, avec une croissance quadratique (en $\frac{n(n-1)}{2}$ précisément).
+
+Finalement, tirant parti du fait que le graphe est complet, et qu'en général, on ne calcule les poids qu'un nombre réduit de fois, nous avons totalement supprimé la matrice de poids précalculée. On utilise au final un ensemble de tableaux (structure \texttt{Towns}\footnote{lib/towns.h} stockant les noms des villes, et leurs coordonnées. Les poids sont alors calculés à la demande.
+
+Pour accélérer légèrement les calculs, on utilise en fait la distance au carré comme poids. Ainsi, on s'économise un calcul de racine sur des flottants, potentiellement coûteux (et ça ne change pas le résultat, la fonction carré étant croissante).
 
 \subsection{Arbres non-enracinés}
 
-Les arbres non-enracinés (free trees en anglais, d'où le nom Ftree) permettent de lier d'unir deux arbres par deux de leur noeuds sans avoir à se préoccuper de notion de racine à déplacer, chaque noeud de l'arbre représente l'arbre. Ceci nous permet de respecter les contraintes en compléxité. 
+Nos arbres doivent permettre un parcours (préfixe) aisé, et surtout la fusion de deux arbres en temps constant.
+
+Les arbres non-enracinés ("free trees" en anglais, d'où le nom \texttt{Ftree}\footnote{lib/ftree.h}) permettent de lier deux arbres par deux de leur noeuds sans avoir à se préoccuper de notion de racine à déplacer. Ceci est réalisé en stockant dans chaque nœud de l'arbre un tableau (\texttt{Vector}) de ses voisins. Ainsi chaque noeud de l'arbre peut représenter l'ensemble de l'arbre, alors qu'avec une implémentation standard, il est impossible de remonter vers un parent éventuel.
 
 \begin{verbatim}
-typedef struct ftree {
+typedef struct {
   Generic data;
   Vector *neighbors;
   int neighborsNb;
 } Ftree;
 \end{verbatim}
 
-La structure ne comprend pas le concept de fils mais de voisins ce qui évite d'avoir à choisir une différence de hauteur dans l'arbre.
+\subsection{Structures utilisées dans l'algorithme de \emph{Kruskal}}
 
-\subsection{Structures utilisées dans l'algorithme de Kruskal}
+Les structures liées à l'algorithmes de \emph{Kruskal} sont particulières car nous ne les avons pas développées de manière à être réutilisables. La liste d'arêtes, comme les autres types listes que l'on retrouve dans le projet, n'est en rien générale, et les fonctions sur la structure des forêts sont spécifiques à l'algorithme de \emph{Kruskal}.
 
-Les structures liées à l'algorithmes de Kruskal sont particulières car nous ne les avons pas développé de manière à pouvoir reservir, la liste d'arêtes n'est en rien générale car elle contient des arbres non-enracinés ce qui est très spécifique, et les fonctions sur la structure des forêt sont spécifiquent à l'algorithme de Kruskal.
+Ceci découle du fait qu'en C, la généricité a pour prix une certaine lourdeur. Pour un type comme la liste pour lequel on ne voudra faire qu'une opération très simple (ajouter un élément en tête), il nous a semblé plus simple de créer des types listes spécifiques là où nous en avions besoin avec la fonction \texttt{cons} correspondante.
+
+\subsubsection{Forêts}
+
+Les forêts correspondent au type \texttt{Forest} du fichier \texttt{kruskal.h}.
+
+La contrainte sur cette structure est que, deux nœuds de \texttt{Ftree} étant donnés, on veut pouvoir vérifier en temps constant si ces nœuds sont en fait dans le même \texttt{Ftree}.
+
+La forêt est ici codée par un \texttt{Vector}, étiquetée par les indices des nœuds. Sachant qu'initialement, chaque case du tableau correspond à un \texttt{Ftree} d'un nœud, chaque case du tableau correspond au final à un nœud de \texttt{Ftree}.
+
+On va ensuite effectuer des opérations de fusion de différents \texttt{Ftree}s. Chaque case du tableau pointera alors vers un nœud d'un \texttt{Ftree} - son représentant. L'idée est que, chaque case correspondant à un nœud de \texttt{Ftree}, si l'on a un \texttt{Ftree} donné, pour chaque nœud du \texttt{Ftree}, on indiquera dans la case correspondante le \textit{même} représentant du \texttt{Ftree}.\\
+Tester l'appartenance à un \texttt{Ftree} revient alors à regarder si les représentants sont les mêmes.
+
+Ceci a cependant un coût : après une fusion, il est nécessaire de mettre à jour le représentant d'un des deux arbres fusionnés, pour correspondre avec celui de l'autre, ce qui a un coût linéaire.
+
+On a bien rempli l'objectif : la vérification est en $O(1)$, mais le coût de maintien de l'exactitude de la structure est en $O(n)$ dans le pire cas.
 
 \subsubsection{Listes d'arêtes}
 
-L'algorithme de Kruskal nécessite de trier les arêtes, il nous fallait donc une structure pour contenir ces arêtes. Nous avons choisi d'utiliser une liste afin de pouvoir par la suite nous servi de l'agorithme tri-fusion.
+L'algorithme de \emph{Kruskal} nécessite de trier les arêtes, il nous fallait donc une structure pour contenir ces arêtes. Nous avons choisi d'utiliser une liste, et d'utiliser par la suite l'algorithme de tri-fusion.
 
 \begin{verbatim}
-typedef struct kedge {
+typedef struct {
   int n1;
   Ftree* addr1;
-
   int n2;
   Ftree* addr2;
 
@@ -159,22 +179,13 @@ typedef struct kedge {
 } Kedge;
 \end{verbatim}
 
-Chaque arête contient son poids, les numéros des sommets qu'elle lie et des pointeur vers les arbres qui leur sont associés. Cela permet de lier les arbres en temps constant car on accède directement au bon noeud.
+Chaque arête contient son poids, les numéros des sommets qu'elle lie et des pointeur vers les nœuds de \texttt{Ftree} qui leur sont associés. Cela permet de lier les arbres en temps constant car on accède directement au bon noeud.
 
-\subsubsection{Forêts}
+\subsection{Les tries comme bases de données}
 
-\begin{verbatim}
-typedef struct forest {
-  Vector* trees;
-  int treesNb;
-} Forest;
-\end{verbatim}
+Une trie est un arbre dont chaque arête est étiquetée par un caractère. Cette structure permet de rechercher un mot en temps linéaire en la taille de ce mot, car chaque chemin dans cet arbre représente un mot ou un préfixe. Ainsi pour rechercher un mot il suffit de chercher chacune des lettres qui le compose à chaque nœud de la trie.
 
-La forêt est ici codée un vector, ce qui permet d'accéder instantanément à l'arbre associée à un sommet du graphe à l'aide des indices dans les arêtes. Alors que l'algorithme de Kruskal avance, le nombre d'arbres identiques augmente et les éléments d'indices appartenant au même arbre vont être exactement le même noeud. Ce qui permet de comparer rapidement si deux sommets appartiennent au même arbre. Toutefois, la compléxité pour répendre ce noeud dans le vecteur est linéaire ce qui augmente la compléxité totale de l'algorithme de Kruskal.
-
-\subsection{Les tries}
-
-Une trie est un arbre dont la racine n'est pas indexé et dont chaque noeud est indéxé par un caractère. Cette structure permet de rechercher un mot en un temps linéaire en la taille de ce mot, car chaque chemin dans cet arbre représente un mot ou un préfixe. Ainsi pour rechercher un mot il suffit de chercher chacune des lettres qui le compose à chaque étage.
+Cette structure est également assez économique en mémoire, puisqu'il n'y a pas de redondance entre mots qui ont des préfixes communs.
 
 \begin{verbatim}
 struct trie {
@@ -191,7 +202,11 @@ struct letter {
 };
 \end{verbatim}
 
-Notre structure de trie est construite à l'aide d'une sous structure, letter, qui représente la liste des lettres présente à un étage de la trie et la trie qui découle de chacune. \texttt{is\_word} permet de savoir à chaque étape de la trie si on se trouve à la fin d'un mot et \texttt{coord\_x}, \texttt{coord\_y} représentent les coordonnées de la ville dont c'est le nom.
+Il y a un choix à faire lors de l'implémentation d'une trie : à chaque nœud, on peut stocker les transitions partant de celui-ci sous forme d'une liste chaînée de lettres étiquetant les transitions, ou en stockant directement un tableau de taille 256, ce qui permet de s'affranchir du temps de parcours de la liste.
+
+Nous avions au départ implémenté la deuxième solution, pour nous rendre compte qu'elle était très coûteuse en mémoire. En effet, les noms de villes sont majoritairement composés de caractères alphabétiques minuscules, ce qui n'utilise qu'une portion du tableau de 256 cases alloué.
+
+Finalement, notre structure de trie\footnote{lib/trie.h} est construite à l'aide d'une sous structure, \texttt{Letter}, qui représente la liste transitions présentes à un nœud de la trie et la trie fille qui découle de chacune. \texttt{is\_word} permet de savoir à chaque étape de la trie si on se trouve à la fin d'un mot et \texttt{coord\_x}, \texttt{coord\_y} représentent les coordonnées de la ville dont c'est le nom.
 
 \section{Implémentation des algorithmes}
 
@@ -200,6 +215,7 @@ L'algorithme \emph{TSP} ne fait en lui même pas grand chose : il s'agit d'appel
 
 \paragraph*{}
 Cela est fait de manière récursive par la fonction \texttt{prefixTravel\_}. Le parcours d'un \texttt{Ftree*} est presque naturel, il faut simplement prendre garde de passer en argument, lors de l'appel récursif, l'adresse du nœud duquel on vient, celui-ci étant également voisin du nouveau nœud sur lequel on appelle.
+
 \subsection{Algorithmes de Kruskal}
 
 \subsection{Parcours de tries}
