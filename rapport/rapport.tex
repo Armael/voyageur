@@ -255,6 +255,19 @@ La recherche du caractère à un étage donné de la trie se fait en temps const
 
 \section{Problématiques pratiques de développement : bibliothèques et outils utilisés}
 
+\subsection{Bibliothèque de tests unitaires}
+Une bonne pratique de développement est l'utilisation récurrente de tests unitaires : une fois des fonctions écrites, il s'agit d'écrire une suite de tests sur cette fonction, testant son comportement sur des valeurs d'entrée données, et vérifiant automatiquement la conformité de la sortie. Cela permet tout d'abord de détecter des bogues, l'oubli de cas particuliers, mais aussi, lors de factorisation ou modification de code existant, de vérifier que le nouveau code est toujours conforme.
+
+L'objectif est de pouvoir créer des tests simplement, et de les lancer ensuite de manière automatique. Les bibliothèques existantes sur lesquelles nous nous sommes penchés nous ont semblées à la fois lourdes et compliquées à utiliser. Nous avons donc développé notre propre bibliothèque de tests unitaires, visant à être pleinement utilisable, tout en étant suffisamment minimale pour ne pas avoir à «~débugger les tests~».
+
+Il s'agit d'un simple header, \texttt{minunit.h}\footnote{dans le dossier tests/}, qui, une fois inclus, permet :
+\begin{itemize}
+\item Créer une fonction de test avec \texttt{START\_TEST}, \texttt{END\_TEST}
+\item Dans cette fonction, on fait des \texttt{assert()}, qui testent une valeur (typiquement une comparaison sur une valeur de retour), et renvoient un message d'erreur en cas d'échec.
+\item Dans le corps principal de la fonction, on peut alors lancer les différents tests créés, et récupérer au final le nombre de tests réussis ou échoués, et afficher un résumé de l'ensemble des tests.
+\end{itemize}
+
+Et en bonus, des couleurs !
 
 \addcontentsline{toc}{section}{Conclusion}
 \section*{Conclusion}
