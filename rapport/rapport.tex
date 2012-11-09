@@ -219,11 +219,11 @@ Cela est fait de manière récursive par la fonction \texttt{prefixTravel\_}. Le
 \subsection{Algorithme de Kruskal}
 
 \paragraph*{}
-Dans un premier temps il s'agit de construire la forêt. Connaissant le nombre de noeud à l'avance il suffit de créer un tableau d'arbres non-enracinés indexé par la case du tableau dans laquelle ils sont. Il n'y a pas besoin de retenir le nom des villes car ils sont contenus ailleurs et peuvent être retrouvé grâce à l'indice. Le nombre de noeud est donc la seule donnée necessaire.
+Dans un premier temps il s'agit de construire la forêt. Connaissant le nombre de noeuds à l'avance, il suffit de créer un tableau d'arbres non-enracinés indexé par la case du tableau dans laquelle ils sont. On raisonne ici uniquement sur les indices des nœuds, les \texttt{Vector} de la structure \texttt{Towns} font la correspondance avec les noms et les coordonnées. Le nombre de nœuds est donc la seule donnée nécessaire.
 \paragraph*{}
-On crée ensuite la liste des arêtes en parcourant le graphe et en ajoutant une arêtes pour chaque couple de ville avec la fonction de poids associé, liste qu'on trie ensuite à l'ide de l'algorithme de trie fusion.
+On crée ensuite la liste des arêtes en calculant au fur et à mesure les poids à partir des coordonnées et en ajoutant une arête pour chaque couple de ville, liste qu'on trie ensuite grâce à un tri fusion.
 \paragraph*{}
-Une fois la liste des arêtes triées et la forêt créés, il suffit d'appliquer l'algorithme de Kruskal comme expliqué dans la sous-section~\ref{sse:kruskalAlgo}.
+Une fois la liste des arêtes triées et la forêt créés, il suffit d'appliquer l'algorithme de Kruskal comme expliqué dans la sous-section~\ref{sse:kruskalAlgo}, et en effectuant les manipulations post-fusion de \texttt{Ftree}s sur la forêt.
 
 \subsection{Parcours de tries}
 
