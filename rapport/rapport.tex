@@ -11,7 +11,7 @@
 \sloppy
 
 \title{Le problème du voyageur de commerce : Implémentation d'un algorithme de résolution}
-\author{Guéneau Armaël \and Gledel Valentin}
+\author{Armaël {\sc Guéneau} \and Valentin {\sc Gledel}}
 \date{\today}
 
 \begin{document}
@@ -28,7 +28,7 @@
 Le «~Voyageur du commerce~» est un problème algorithmique classique, pour lequel de nombreuses solutions approchées existent, bien que la résolution exacte soit difficile. Celui-ci peut se modéliser par un voyageur de commerce possédant une liste de villes à visiter pour vendre ses produits, et qui cherche à minimiser le temps qu’il passe sur la route. Connaissant la liste des villes et les distances entres elles, on veut alors trouver l’ordre dans lequel les parcourir pour que la distance totale parcourue soit minimale. Ce problème est NP-complet, il nous est donc impossible de trouver un algorithme trouvant une solution optimale et fonctionnant en un temps raisonnable.
 \paragraph*{}
 Dans le cadre du projet~1 en C, nous avons alors implémenté en binôme un algorithme de résolution approchée de ce problème, ainsi qu’une interface utilisateur permettant de sélectionner aisément les villes à parcourir par le voyageur dans une base de donnée.
-L’algorithme choisi repose sur le parcours d'un arbre couvrant minimal pour le graphe des villes, construit à l'aide de l'algorithme de Kruskal. Il nous a fallu ensuite implémenter une base de données stockant des villes à parcourir par le voyageur et une interface utilisateur.
+L’algorithme choisi repose sur le parcours d'un arbre couvrant minimal pour le graphe des villes, construit à l'aide de l'algorithme de {\sc Kruskal}. Il nous a fallu ensuite implémenter une base de données stockant des villes à parcourir par le voyageur et une interface utilisateur.
 \paragraph*{}
 Nous allons tout d’abord présenter les algorithmes que nous avons cherché à implémenter tout au long du projet : ceux-ci reposant sur des structures sous-jacentes, celà fera apparaître les contraintes sur celles-ci, ce qui sera attendu a priori. Alors, nous pourrons détailler leur implémentation, sous forme de bibliothèques indépendantes, prêtes à être utilisées ultérieurement. Ceci étant fait, et des bibliothèques propres à notre disposition, nous pourrons expliciter notre implémentation des algorithmes utilisant ces structures. Finalement, nous parlerons des problématiques liées au développement en langage de programmation C, les bibliothèques et les outils utilisés.
 
@@ -55,10 +55,10 @@ Le cœur du projet repose sur l'utilisation d'un algorithme glouton, nommé ici 
 \item La structure d'arbre doit pouvoir se parcourir efficacement. Une implémentation telle que réalisée en TP semble convenir pour le moment (un arbre est un nœud racine et des pointeurs vers les fils), adaptée pour gérer un nombre quelconque de fils.
 \end{itemize}
 
-\subsection{Algorithme de Kruskal}
+\subsection{Algorithme de {\sc Kruskal}}
 \label{sse:kruskalAlgo}
 
-\paragraph*{} L'algorithme de \emph{Kruskal} permet de construire un arbre couvrant minimal pour un graphe donné, à savoir un arbre composé de tous les sommets du graphe, et de poids minimal. Il commence par trier toutes les arêtes par ordre croissant de poids, puis construit une forêt qui est initialement composée d'arbres à un nœud, correspondant aux sommets du graphe. \\
+\paragraph*{} L'algorithme de {\sc Kruskal} permet de construire un arbre couvrant minimal pour un graphe donné, à savoir un arbre composé de tous les sommets du graphe, et de poids minimal. Il commence par trier toutes les arêtes par ordre croissant de poids, puis construit une forêt qui est initialement composée d'arbres à un nœud, correspondant aux sommets du graphe. \\
 Il s'agit ensuite de lier les arbres en parcourant les arêtes (triées) : si les deux sommets que lie l'arête appartiennent à des arbres différents dans la forêt, on relie ces deux arbres par ces sommets; sinon on passe à l'arête suivante.
 \paragraph*{}
 Formellement cela s'écrit :
@@ -78,7 +78,7 @@ Construire la forêt $F$, composée des arbres associés aux sommets\;
     Passer à l'arête suivante\;
   }
 }
-\caption{Algorithme de \emph{Kruskal}}
+\caption{Algorithme de {\sc Kruskal}}
 \end{algorithm}
 
 \medskip
@@ -99,7 +99,7 @@ Nous aurions pu implémenter une table de hachage générique, cependant ici, co
 
 \section{Les structures de données}
 
-Une fois les algorithmes choisis et qu'a été définie la manière précise dont ils ont besoin d'utiliser les structures sous-jacentes, il faut effectivement les choisir et les implémenter. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement resservir pour d'autres projets. Cependant, pour l'algorithme de \emph{Kruskal} nous avons développé des structures plus spécifiques.
+Une fois les algorithmes choisis et qu'a été définie la manière précise dont ils ont besoin d'utiliser les structures sous-jacentes, il faut effectivement les choisir et les implémenter. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement resservir pour d'autres projets. Cependant, pour l'algorithme de {\sc Kruskal} nous avons développé des structures plus spécifiques.
 
 \subsection{Le type \texttt{Generic}}
 
@@ -124,7 +124,7 @@ Ils se sont révélés très utiles, sont utilisées à de multiples endroits du
 
 La description même de l'algorithme reposant sur la notion de graphe, nous avions commencé par implémenter une bibliothèque de manipulation de graphes, tout d'abord sous la forme de listes d'arètes (contenant les poids). Voyant que la taille du graphe en mémoire explosait pour un nombre un peu grand de villes (typiquement quelques milliers), nous avons changé notre implémentation pour une représentation avec matrice de poids. Celle-ci économise en effet toute la mémoire prise par les pointeurs de chaînage. Le gain en mémoire fut substantiel, divisant par plus de 2 la consommation mémoire. Celle-ci restait cependant importante, avec une croissance quadratique (en $\frac{n(n-1)}{2}$ précisément).
 
-Finalement, tirant parti du fait que le graphe est complet, et qu'en général, on ne calcule les poids qu'un nombre réduit de fois, nous avons totalement supprimé la matrice de poids précalculée. On utilise au final un ensemble de tableaux (structure \texttt{Towns}\footnote{lib/towns.h} stockant les noms des villes, et leurs coordonnées. Les poids sont alors calculés à la demande.
+Finalement, tirant parti du fait que le graphe est complet, et qu'en général, on ne calcule les poids qu'un nombre réduit de fois, nous avons totalement supprimé la matrice de poids précalculée. On utilise au final un ensemble de tableaux (structure \texttt{Towns}\footnote{lib/towns.h} stockant les noms des villes, et leurs coordonnées. Les poids sont alors calculés à la demande.\footnote{la bibliothèque de gestion des graphes est cependant toujours accessible dans old/lib/graph.h}
 
 Pour accélérer légèrement les calculs, on utilise en fait la distance au carré comme poids. Ainsi, on s'économise un calcul de racine sur des flottants, potentiellement coûteux (et ça ne change pas le résultat, la fonction carré étant croissante).
 
@@ -142,9 +142,9 @@ typedef struct {
 } Ftree;
 \end{verbatim}
 
-\subsection{Structures utilisées dans l'algorithme de \emph{Kruskal}}
+\subsection{Structures utilisées dans l'algorithme de {\sc Kruskal}}
 
-Les structures liées à l'algorithmes de \emph{Kruskal} sont particulières car nous ne les avons pas développées de manière à être réutilisables. La liste d'arêtes, comme les autres types listes que l'on retrouve dans le projet, n'est en rien générale, et les fonctions sur la structure des forêts sont spécifiques à l'algorithme de \emph{Kruskal}.
+Les structures liées à l'algorithmes de {\sc Kruskal} sont particulières car nous ne les avons pas développées de manière à être réutilisables. La liste d'arêtes, comme les autres types listes que l'on retrouve dans le projet, n'est en rien générale, et les fonctions sur la structure des forêts sont spécifiques à l'algorithme de {\sc Kruskal}.
 
 Ceci découle du fait qu'en C, la généricité a pour prix une certaine lourdeur. Pour un type comme la liste pour lequel on ne voudra faire qu'une opération très simple (ajouter un élément en tête), il nous a semblé plus simple de créer des types listes spécifiques là où nous en avions besoin avec la fonction \texttt{cons} correspondante.
 
@@ -165,7 +165,7 @@ On a bien rempli l'objectif : la vérification est en $O(1)$, mais le coût de m
 
 \subsubsection{Listes d'arêtes}
 
-L'algorithme de \emph{Kruskal} nécessite de trier les arêtes, il nous fallait donc une structure pour contenir ces arêtes. Nous avons choisi d'utiliser une liste, et d'utiliser par la suite l'algorithme de tri-fusion.
+L'algorithme de {\sc Kruskal} nécessite de trier les arêtes, il nous fallait donc une structure pour contenir ces arêtes. Nous avons choisi d'utiliser une liste, et d'utiliser par la suite l'algorithme de tri-fusion.
 
 \begin{verbatim}
 typedef struct {
@@ -212,50 +212,43 @@ Finalement, notre structure de trie\footnote{lib/trie.h} est construite à l'aid
 \section{Implémentation des algorithmes}
 
 \subsection{TSP}
-L'algorithme \emph{TSP} ne fait en lui même pas grand chose : il s'agit d'appeler \emph{Kruskal}, puis de faire un parcours préfixe du \texttt{Ftree*} obtenu.
+L'algorithme \emph{TSP} ne fait en lui même pas grand chose : il s'agit d'appeler {\sc Kruskal}, puis de faire un parcours préfixe du \texttt{Ftree*} obtenu.
 
 \paragraph*{}
 Cela est fait de manière récursive par la fonction \texttt{prefixTravel\_}. Le parcours d'un \texttt{Ftree*} est presque naturel, il faut simplement prendre garde de passer en argument, lors de l'appel récursif, l'adresse du nœud duquel on vient, celui-ci étant également voisin du nouveau nœud sur lequel on appelle.
 
-\subsection{Algorithme de Kruskal}
+\subsection{Algorithme de {\sc Kruskal}}
+
+Dans un premier temps il s'agit de construire la forêt. Connaissant le nombre de noeuds à l'avance, il suffit de créer un tableau d'arbres non-enracinés indexé par la case du tableau dans laquelle ils sont. On raisonne ici uniquement sur les indices des nœuds, les \texttt{Vector} de la structure \texttt{Towns} font la correspondance avec les noms et les coordonnées. Le nombre de nœuds est donc la seule donnée nécessaire.
+
+On crée ensuite la liste des arêtes en calculant au fur et à mesure les poids à partir des coordonnées et en ajoutant une arête pour chaque couple de ville, liste qu'on trie ensuite grâce à un tri fusion.
+
+Une fois la liste des arêtes triées et la forêt créés, il suffit d'appliquer l'algorithme de {\sc Kruskal} comme expliqué dans la sous-section~\ref{sse:kruskalAlgo}, et en effectuant les manipulations post-fusion de \texttt{Ftree}s sur la forêt.
+
+Les fonctions merge et split sont ici, contrairement à une version instinctive, itératives. En effet, nous avons constaté que pour un nombre de villes suffisamment grand, les versions récursives (notamment \texttt{merge}) finissent par échouer par \textit{stack overflow}.
 
 \paragraph*{}
-Dans un premier temps il s'agit de construire la forêt. Connaissant le nombre de noeuds à l'avance, il suffit de créer un tableau d'arbres non-enracinés indexé par la case du tableau dans laquelle ils sont. On raisonne ici uniquement sur les indices des nœuds, les \texttt{Vector} de la structure \texttt{Towns} font la correspondance avec les noms et les coordonnées. Le nombre de nœuds est donc la seule donnée nécessaire.
-\paragraph*{}
-On crée ensuite la liste des arêtes en calculant au fur et à mesure les poids à partir des coordonnées et en ajoutant une arête pour chaque couple de ville, liste qu'on trie ensuite grâce à un tri fusion.
-\paragraph*{}
-Une fois la liste des arêtes triées et la forêt créés, il suffit d'appliquer l'algorithme de Kruskal comme expliqué dans la sous-section~\ref{sse:kruskalAlgo}, et en effectuant les manipulations post-fusion de \texttt{Ftree}s sur la forêt.
-\paragraph*{}
-Les fonctions merge et split sont ici, contrairement à une version instinctive, itératives. En effet, nous avons constaté que pour un nombre de villes suffisamment grand, les versions récursives (notamment \texttt{merge}) finissent par échouer par \textit{stack overflow}.
+Finalement, la complexité de l'algorithme est en $O(N\times A)$, où $N$ est le nombre de nœuds, et $A$ le nombre d'arêtes. En effet, on parcourt la liste des arêtes, et pour chaque arête on fusionne deux arbres, avec un coût post-fusion linéaire en nombre de nœuds.
 \subsection{Parcours de tries}
 
-\paragraph*{}Les tries sont optimisées pour avoir un parcours très simple. Il suffit de rechercher à chaque étage de la trie les lettres du mot en entrée et de renvoyer des erreurs si les lettres ne sont pas présentent ou si lorsque le mot est terminé \texttt{is\_word} n'est pas à 1.
-\paragraph*{}L'algorithme de façon formel est le suivant :
-\medskip
-
-\begin{algorithm}[H]
-  \SetAlgoLined
-  \Donnees{La chaîne de caractère $(c_i)_{i \in [0,n-1]}$ correspondant au nom de la ville recherchée et la trie contenant les données}
-  \Res{Les coordonnées de cette ville ou une erreur si elle n'est pas présente}
-  \eSi{La lettre $c_0$ est présente à cette étage de la trie} {
-    \eSi{La chaine de caractère ne contient qu'un seul caractère} {
-      \eSi{La trie est terminale à cet endroit} {
-        Renvoyer les coordonnées\;
-      }{
-        Renvoyer une erreur\;
-      }
-    }{
-      Appliquer cet algorithme à la trie fille et à la chaîne $(c_i)_{i \in [1,n-1]}$ \;
-    }
-  }{
-    Renvoyer une erreur\;
-  }
-\caption{Algorithme de parcours de trie}
-\end{algorithm}
-
-\medskip
+Les tries se parcourent très simplement. Il suffit de rechercher pour chaque nœud de la trie la première lettre du mot en entrée, et d'appeler récursivement sur la trie fille et la suite du mot. Ceci est réalisé par la fonction \texttt{trie\_getCoord()} de \texttt{trie.h}
 
 La recherche du caractère à un étage donné de la trie se fait en temps constant donc la complexité est en $\Theta$(longueur de la chaine de caractères).
+
+\paragraph*{}
+Une autre opération moins simple effectuée sur les tries est de retourner la liste de tous les mots contenus dans une trie. Ceci est effectué dans le programme voyageur\footnote{src/voyageur.c} pour obtenir les complétions possibles, un préfixe étant donné.
+
+Pour ce faire, on utilise une fonction (fonction \texttt{explore()}) prenant deux accumulateurs : l'accumulateur du mot courant \texttt{acc}, et l'accumulateur des mots déjà ajoutés \texttt{list}. Le principe de l'algorithme est alors le suivant, la trie $T$ et le mot $c_0 \ldots c_n$ étant passée en argument :
+
+\begin{algorithm}[H]
+  \PourTous{l dans les transitions partant de $T$} {
+    \Si{$l\rightarrow next$ contient un mot} {
+      Ajouter $c_0$ :\!: $acc$ à $list$\;
+    }
+    $acc \leftarrow c_0$:\!: $acc$\;
+    Appeler l'algorithme sur $l\rightarrow next$, $c_1 \ldots c_n$\;
+  }
+\end{algorithm}
 
 \section{Problématiques pratiques de développement : bibliothèques et outils utilisés}
 
@@ -280,19 +273,40 @@ Pour cela, nous nous sommes appuyés sur l'article de Peter Miller (\cite{makefi
 
 Celle-ci consiste en fait à faire générer à \texttt{gcc} la liste des dépendances d'un fichier, et de stocker ça dans un fichier particulier, lui-même étant en dépendance. Make, en chargeant tous ces fichiers, récupère toutes les informations de dépendances, et ne reconstruit que l'exact nécessaire.
 
+\subsection{Utilisation de la bibliothèque readline}
+Pour fournir une interface texte agréable à utiliser, nous avons utilisé la bibliothèque readline. Celle-ci est massivement utilisée dans le monde UNIX, ce qui offre l'avantage à notre programme de se commander de façon relativement standard et conforme aux standards UNIX.
+
+Cela inclut la possibilité de se déplacer sur la ligne couramment écrite, de remonter dans l'historique des commandes, et d'utiliser les raccourcis clavier GNU «~à la emacs~».
+
+Par ailleurs, readline nous a permis d'ajouter plus ou moins aisément le support de l'autocomplétion : lors de l'écriture d'une commande, il suffit d'appuyer sur la touche tabulation pour se voir proposer une liste des commandes/données adaptées et complétant ce que l'on a commencé à taper. Ainsi, les commandes sont autocomplétées, mais aussi les noms des villes de la base de données. On tire ici également parti de la rapidité d'exploration de notre trie.
+
+\subsection{Valgrind : un outil indispensable au développeur C}
+Le développement de ce projet a été grandement facilité par l'utilisation du formidable outil \emph{Valgrind}.
+
+\subsubsection{Outil Memcheck}
+L'outil \emph{Memcheck} de \emph{Valgrind} permet d'observer très finement les manipulations mémoire effectuées par le programme, et ce au cours de son exécution. Ainsi, celui-ci permet de pointer les accès illégaux, mais aussi l'utilisation de variables non initialisées, la mémoire non libérée, et où elle a été allouée...
+
+\subsubsection{Outil Massif}
+\emph{Massif} est un profileur de tas : il affiche au cours du temps l'utilisation du tas. Il a été d'une grande aide lors des phases d'optimisation des structures que nous avions implémentées. Un cas d'utilisation a été notamment pour optimiser les \texttt{Trie}s. Voici ce qu'affichait (entre autres) \emph{Massif} pour la création d'une trie contenant environ 100000 villes (puis libération), à gauche pour notre première implémentation (avec des tableaux de taille 256), à droite pour la seconde (avec des listes) :
+
+\medskip
+
+\includegraphics[scale=0.5]{tries_ram.pdf}
+
+On voit clairement que la première implémentation est sous-optimale, consommant 2Go de RAM là où la deuxième en prend 36Mo. On remarque également que dans le premier cas, libérer la mémoire prend plus de temps que de l'allouer !
+
 \addcontentsline{toc}{section}{Conclusion}
 \section*{Conclusion}
-\paragraph*{}
-Nous obtenons donc à l'aide de l'algorithme de Kruskal et de l'algorithme TSP, une résolution du problème du voyageur de commerce qui, même si elle n'est pas optimale, renvoie des résultats acceptable. En effet, les tests que nous avons effectuer nous ont permis de constater que les résultats obtenus ne contenaient pas de parcours absurdes dont il est évident qu'ils sont bien trop long.
-\paragraph*{}
-La structure de donnée crée à l'aide des tries permet de charger des milliers de villes (l'ensemble des villes française) en quelque seconde et de ressortir celle demandée presque instantanément.
-\paragraph*{}
-L'interface utilisateur utilisant les convention UNIX permet de chargés differentes bases de données (uniquement les grandes villes française ou aussi les petites communes), de rentrer une liste de ville à parcourir à la main ou à l'aide d'un fichier texte.
-\paragraph*{}
-Nous avons rencontrer des difficultées de compléxité qui empêchaient d'appliquer le programme à un trop grand nombre de ville (de l'ordre du millier) et qui nous ont amené à changer certaine de nos structure de données notament la structure de graphe pour obtenir des fonctions bien plus rapide.
-\paragraph*{}
-Toutefois, le programme n'est pas encore optimal. Même si appliquer l'algorithme à 3000 villes ne prend plus que 12 seconde, il reste difficile d'atteindre 10 000 villes. La structure de donnée stockant les arêtes peut être la source de cette faiblesse. Une amélioration possible serait de remplacer la structure de liste par un tableau qui permettrait de trier sur place les arêtes.
 
+Nous obtenons donc à l'aide de l'algorithme de {\sc Kruskal} et de l'algorithme TSP, une résolution du problème du voyageur de commerce qui, même si elle n'est pas optimale, renvoie des résultats acceptables (l'écart entre notre solution et l'optimale est en fait majoré par 2). Par ailleurs, les tests que nous avons pu effectuer nous ont permis de constater que les résultats obtenus ne contenaient pas de parcours absurdes, pour lesquels il était évident qu'ils étaient bien trop longs.
+
+La structure de donnée créée à l'aide des tries permet de charger des dizaines de milliers de villes (l'ensemble des villes françaises par exemple) en quelque secondes, et d'en ressortir un sous ensemble (voire toutes) quasiment instantanément.
+
+L'interface utilisateur utilisant les conventions UNIX permet de charger différentes bases de données (uniquement les grandes villes française ou aussi les petites communes), de rentrer une liste de villes à parcourir à la main ou à l'aide d'un fichier texte.
+
+Nous avons rencontré des difficultés de complexité qui empêchaient d'appliquer le programme à un trop grand nombre de villes (de l'ordre du millier) et qui nous ont amené à changer certaines de nos structure de données, notamment la structure de graphe, pour obtenir des fonctions bien plus rapides ou économes en mémoire.
+
+Toutefois, le programme n'est pas encore optimal. Même si appliquer l'algorithme à 3000 villes ne prend plus que 12 secondes, il reste difficile d'atteindre 10 000 villes. La structure stockant l'ensemble des arêtes du graphe peut être la source de cette faiblesse. Une amélioration possible serait de remplacer la structure de liste par un tableau qui permettrait de trier sur place les arêtes.
 
 \begin{thebibliography}{00}
 
@@ -308,6 +322,10 @@ Toutefois, le programme n'est pas encore optimal. Même si appliquer l'algorithm
   \textit{Recursive Make Considered Harmful},
   AUUGN Journal of AUUG Inc.,
   1998.
+
+\bibitem{wiki}
+  \textit{Kruskal algorithm},
+  Wikipedia (en).
 
 \end{thebibliography}
 
