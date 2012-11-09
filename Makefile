@@ -48,6 +48,7 @@ tests: build-tests
 clean: 
 	rm -rf $(OBJ) $(OBJ_TEST)
 	rm -rf $(DEP) $(DEP_TEST)
+	rm -rf $(BIN_TEST)
 	rm rapport/*.aux
 	rm rapport/*.log
 	rm rapport/*.toc
