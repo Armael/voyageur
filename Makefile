@@ -7,7 +7,7 @@ OBJ := $(patsubst %.c,%.o,$(SRC) $(LIBS))
 DEP := ${OBJ:.o=.dep}
 
 SRC_TEST := vector.c ftree.c kruskal.c
-LIBS_TEST := vector.c ftree.c kruskal.c
+LIBS_TEST := vector.c ftree.c kruskal.c utils.c
 
 SRC_TEST := $(patsubst %,tests/%,$(SRC_TEST))
 LIBS_TEST := $(patsubst %,lib/%,$(LIBS_TEST))
@@ -31,7 +31,7 @@ voyageur: $(OBJ)
 build-tests: $(BIN_TEST)
 
 $(BIN_TEST): $(DEP_TEST) $(OBJ_TEST)
-	$(CC) $(CFLAGS) -o $@ $@.o $(LIBS_OBJ_TEST)
+	$(CC) $(CFLAGS) -lm -o $@ $@.o $(LIBS_OBJ_TEST)
 
 tests: build-tests
 	@(echo)
