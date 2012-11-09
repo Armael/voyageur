@@ -5,6 +5,7 @@
 \usepackage{lmodern}
 \usepackage{graphicx}
 \usepackage{algorithm2e}
+\usepackage{amsmath, amsthm, amssymb}
 
 \sloppy
 
@@ -37,6 +38,34 @@ Nous allons tout d’abord présenter les algorithmes que nous avons cherché à
 \subsection{TSP}
 
 \subsection{Algorithmes de Kruskal}
+
+\paragraph*{} L'algorithme de Kruskal est l'algorithme qui permet de construire l'arbre couvrant minimal. Il s'agit de réunir toutes les arêtes du graph en un seul arbre. On commence par trier toutes les arêtes par ordre croissant de poids. Puis on construit une forêt qui est initialement composée d'arbres dont le seul noeud est la racine avec chaque racine étiquetté par un sommet différent du graph. Il s'agit ensuite de lier les arbres en parcourant les arêtes : si les deux sommets qui constituent l'arête en tête de liste appartiennent à des arbres différents, on lie ces deux arbres par ces sommets; sinon on passe à l'arête suivante.
+\paragraph*{}
+Formellement celà s'écrit :
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{Le graphe G=(V, E) des villes et sa fonction de poids $w$}
+\KwResult{T, un arbre couvrant minimal du graphe}
+Trier E par ordre croissant de poids selon $w$\;
+Construire la forêt F, composée des arbres associés aux sommets\;
+\ForEach{e=(v1, v2) $\in$ E $trié$}{
+\eIf{v1 et v2 appartiennent à un arbre différent}{
+Lier v1 et v2, et donc les arbres qui les contiennent\;
+}{
+Passer à l'arête suivante\;
+}
+}
+\caption{Algorithme de Kruskal}
+\end{algorithm}
+
+\medskip
+
+Pour des raisons de compléxité, nous voulons pouvoir vérifier que deux sommets n'appartiennent pas au même arbre et lier deux arbres en temps constant. Cela entraine deux contraintes :
+\begin{itemize}
+\item Les arbres doivent être non-enracinés pour pouvoir les lier aisément.
+\item La forêt doit avoir une structure permettant une vérification instantanée de l'appartenance à un arbre.
+\end{itemize}
 
 \subsection{Parcours de tries}
 
