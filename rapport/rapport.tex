@@ -60,6 +60,8 @@ Le cœur du projet repose sur l'utilisation d'un algorithme glouton, nommé ici 
 \paragraph*{}
 Formellement celà s'écrit :
 
+\medskip
+
 \begin{algorithm}[H]
 \SetAlgoLined
 \KwData{Le graphe G=(V, E) des villes et sa fonction de poids $w$}
@@ -86,23 +88,90 @@ Pour des raisons de compléxité, nous voulons pouvoir vérifier que deux sommet
 
 \subsection{Parcours de tries}
 
-\section{Les structures de donées}
+\paragraph*{}Les tries dont nous détaillerons l'implémentation dans la Section~\ref{se:structures} nous ont semblé être adaptées pour gérer des nombreuses villes et leur coordonnées. En effet, leur structure sous forme de dictionnaire permet de retrouver rapidement une ville comme nous allons le constater.
 
-Une fois les algorithmes choisis (TSP nous était imposé et Kruskal fortement imposé), il nous fallait choisir les structuresde données adaptées. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement reservir pour d'autes projets. Cependant, pour l'algorithme de kruskal nous avons développé des structures spécifiques.
+\section{Les structures de donées}
+\label{se:structures}
+
+Une fois les algorithmes choisis (TSP nous était imposé et Kruskal fortement imposé), il nous fallait choisir les structures de données adaptées. La plupart des structures ont été conçues sous forme de bibliothèques de sorte à pouvoir éventuellement reservir pour d'autes projets. Cependant, pour l'algorithme de kruskal nous avons développé des structures spécifiques.
+
+\subsection{La structure Generic}
+
+\begin{verbatim}
+typedef union {
+  void* p;
+  int i;
+  float f;
+  double d;
+} Generic;
+\end{verbatim}
 
 \subsection{Les vector}
 
-\subsection{Le graph}
+\begin{verbatim}
+typedef struct Vector {
+  Generic* content; /* Generic array */
+  int size;
+} Vector;
+\end{verbatim}
+
+\subsection{Le graphe}
+
+Le graphe n'est pas représenter par une structure usuelle de graphe avec une liste de sommet et d'arêtes. En effet, chaque sommet du graphe est lié à chaque autre il est donc inutile et lourd de garder en mémoire une structure de graphe avec des arêtes.
 
 \subsection{Arbres non-enracinée}
+
+\begin{verbatim}
+typedef struct ftree {
+  Generic data;
+  Vector *neighbors;
+  int neighborsNb;
+} Ftree;
+\end{verbatim}
 
 \subsection{Structures utilisées dans l'algorithme de Kruskal}
 
 \subsubsection{Listes d'arêtes}
 
+\begin{verbatim}
+typedef struct kedge {
+  int n1;
+  Ftree* addr1;
+
+  int n2;
+  Ftree* addr2;
+
+  float weight;
+
+  struct kedge *next;
+} Kedge;
+\end{verbatim}
+
 \subsubsection{Forêts}
 
+\begin{verbatim}
+typedef struct forest {
+  Vector* trees;
+  int treesNb;
+} Forest;
+\end{verbatim}
+
 \subsection{Les tries}
+
+\begin{verbatim}
+struct trie {
+  float coord_x;
+  float coord_y;
+  int is_word;
+  Letter* letters;
+};
+
+struct letter {
+  char letter;
+  Trie* next;
+  struct letter *tail;
+};
+\end{verbatim}
 
 \section{Implémentation des algorithmes}
 
